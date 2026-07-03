@@ -1,13 +1,8 @@
-import {
-  StyleSheet,
-  View,
-  FlatList,
-  ActivityIndicator,
-  Text,
-} from 'react-native';
+import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
 import PokemonListItem from '../components/PokemonListItem';
 import { PokemonListScreenProps } from '../navigation/types';
 import { usePokemonInfinite } from '../hooks/usePokemonInfinite';
+import { LegendList } from '@legendapp/list/react-native';
 
 export default function PokemonListScreen({
   navigation,
@@ -41,7 +36,8 @@ export default function PokemonListScreen({
 
   return (
     <View style={styles.container}>
-      <FlatList
+      <LegendList
+        recycleItems={true}
         data={pokemons}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
@@ -53,6 +49,7 @@ export default function PokemonListScreen({
             }}
           />
         )}
+        estimatedItemSize={80}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) {
             fetchNextPage();

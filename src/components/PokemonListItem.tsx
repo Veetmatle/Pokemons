@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
+import { memo } from 'react';
 
 interface PokemonListItemProps {
   name: string;
@@ -7,11 +8,7 @@ interface PokemonListItemProps {
   onPress: () => void;
 }
 
-export default function PokemonListItem({
-  name,
-  id,
-  onPress,
-}: PokemonListItemProps) {
+const PokemonListItem = ({ name, id, onPress }: PokemonListItemProps) => {
   const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 
   return (
@@ -23,7 +20,8 @@ export default function PokemonListItem({
       </View>
     </TouchableOpacity>
   );
-}
+};
+export default memo(PokemonListItem);
 
 const styles = StyleSheet.create({
   card: {

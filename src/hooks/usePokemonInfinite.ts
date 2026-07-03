@@ -6,6 +6,7 @@ export function usePokemonInfinite() {
   const query = useInfiniteQuery({
     queryKey: ['pokemons'],
     queryFn: ({ pageParam }) => fetchPokemonList(pageParam),
+    staleTime: Infinity,
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
       if (lastPage.length < 20) return undefined;

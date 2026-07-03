@@ -19,4 +19,5 @@ export type AppTabParamList = {
   PokemonTab: undefined;
   Favorite: undefined;
   Map: undefined;
+  Camera: undefined;
 };
