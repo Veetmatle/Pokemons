@@ -3,6 +3,7 @@ import PokemonListItem from '../components/PokemonListItem';
 import { PokemonListScreenProps } from '../navigation/types';
 import { usePokemonInfinite } from '../hooks/usePokemonInfinite';
 import { LegendList } from '@legendapp/list/react-native';
+import { useCallback } from 'react';
 
 export default function PokemonListScreen({
   navigation,
@@ -18,6 +19,13 @@ export default function PokemonListScreen({
     refetch,
   } = usePokemonInfinite();
 
+  const handleItemPress = useCallback(
+    (pokemonName: string) => {
+      navigation.navigate('PokemonDetail', { pokemonName });
+    },
+    [navigation],
+  );
+
   if (isLoading) {
     return (
       <View style={styles.centerContainer}>
@@ -29,7 +37,7 @@ export default function PokemonListScreen({
   if (isError) {
     return (
       <View style={styles.centerContainer}>
-        <Text style={styles.errorText}>Pokemons could not be fetched.</Text>
+        <Text style={styles.errorText}>Pokemons could not be fetched</Text>
       </View>
     );
   }
@@ -44,12 +52,10 @@ export default function PokemonListScreen({
           <PokemonListItem
             name={item.name}
             id={item.id}
-            onPress={() => {
-              navigation.navigate('PokemonDetail', { pokemonName: item.name });
-            }}
+            onPress={handleItemPress}
           />
         )}
-        estimatedItemSize={80}
+        estimatedItemSize={110}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) {
             fetchNextPage();
