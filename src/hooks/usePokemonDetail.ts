@@ -4,6 +4,6 @@ import { fetchPokemonDetail } from '../services/pokemonService';
 export function usePokemonDetail(name: string) {
   return useQuery({
     queryKey: ['pokemon', name],
-    queryFn: () => fetchPokemonDetail(name),
+    queryFn: ({ signal }) => fetchPokemonDetail(name, signal),
   });
 }

@@ -10,10 +10,12 @@ const BASE_URL = 'https://pokeapi.co/api/v2';
 export const fetchPokemonList = async (
   offset: number,
   limit: number = 20,
+  signal?: AbortSignal,
 ): Promise<PokemonData[]> => {
   try {
     const response = await fetch(
       `${BASE_URL}/pokemon?limit=${limit}&offset=${offset}`,
+      { signal },
     );
 
     if (!response.ok) {
@@ -32,9 +34,12 @@ export const fetchPokemonList = async (
 
 export const fetchPokemonDetail = async (
   name: string,
+  signal?: AbortSignal,
 ): Promise<PokemonDetailData> => {
   try {
-    const response = await fetch(`${BASE_URL}/pokemon/${name.toLowerCase()}`);
+    const response = await fetch(`${BASE_URL}/pokemon/${name.toLowerCase()}`, {
+      signal,
+    });
 
     if (!response.ok) {
       throw new Error(
