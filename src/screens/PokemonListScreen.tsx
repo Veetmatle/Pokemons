@@ -1,4 +1,4 @@
-import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
+import { View, ActivityIndicator, Text } from 'react-native';
 import PokemonListItem from '../components/PokemonListItem';
 import { PokemonListScreenProps } from '../navigation/types';
 import { usePokemonInfinite } from '../hooks/usePokemonInfinite';
@@ -20,15 +20,15 @@ export default function PokemonListScreen({
   } = usePokemonInfinite();
 
   const handleItemPress = useCallback(
-    (pokemonName: string) => {
-      navigation.navigate('PokemonDetail', { pokemonName });
+    (pokemonName: string, pokemonId: number) => {
+      navigation.navigate('PokemonDetail', { pokemonName, pokemonId });
     },
     [navigation],
   );
 
   if (isLoading) {
     return (
-      <View style={styles.centerContainer}>
+      <View className={styles.centerContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
       </View>
     );
@@ -36,14 +36,14 @@ export default function PokemonListScreen({
 
   if (isError) {
     return (
-      <View style={styles.centerContainer}>
-        <Text style={styles.errorText}>Pokemons could not be fetched</Text>
+      <View className={styles.centerContainer}>
+        <Text className={styles.errorText}>Pokemons could not be fetched</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View className={styles.container}>
       <LegendList
         recycleItems={true}
         data={pokemons}
@@ -78,13 +78,9 @@ export default function PokemonListScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', paddingTop: 10 },
-  centerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  errorText: { fontSize: 16, color: 'red', fontWeight: 'bold' },
-});
+const styles = {
+  centerContainer:
+    'flex-1 justify-center items-center bg-white dark:bg-[#0F1117]',
+  errorText: 'font-bold text-base text-red-800 dark:text-red-400',
+  container: 'flex-1 bg-amber-300 dark:bg-[#0F1117] pt-2.5',
+};

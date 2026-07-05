@@ -10,7 +10,7 @@ export default function CameraScreen() {
         <Text style={styles.text}>Camera screen</Text>
         <Text style={styles.text}>Work in progress :DD</Text>
       </View>
-      <View className="flex-1 bg-white dark:bg-black">
+      <View className="flex-1 items-center bg-white dark:bg-black">
         <Text>Motive color button change</Text>
         <TouchableOpacity onPress={toggleColorScheme}>
           <Text style={styles.text}>Change color</Text>

@@ -1,12 +1,12 @@
 import { Text, View, TouchableOpacity, useColorScheme } from 'react-native';
-import Image from '../components/PokemonImage';
+import Image from './Image';
 import { memo } from 'react';
-import { Feather } from '@expo/vector-icons';
+import Feather from './Icon';
 
 interface PokemonListItemProps {
   name: string;
   id: number;
-  onPress: (pokemonName: string) => void;
+  onPress: (pokemonName: string, pokemonId: number) => void;
 }
 
 const PokemonListItem = ({ name, id, onPress }: PokemonListItemProps) => {
@@ -15,7 +15,7 @@ const PokemonListItem = ({ name, id, onPress }: PokemonListItemProps) => {
   const iconColor = isDark ? '#64748b' : '#b45309';
 
   return (
-    <TouchableOpacity className={styles.card} onPress={() => onPress(name)}>
+    <TouchableOpacity className={styles.card} onPress={() => onPress(name, id)}>
       <View className={styles.imageWrapper}>
         <Image
           className={styles.image}
