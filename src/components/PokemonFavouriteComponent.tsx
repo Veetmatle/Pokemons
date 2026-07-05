@@ -22,10 +22,6 @@ export const PokemonFavouriteComponent = () => {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    top: 16,
-    right: 24,
-    zIndex: 50,
     width: 48,
     height: 48,
     borderWidth: 1,

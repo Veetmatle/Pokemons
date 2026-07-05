@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text } from 'react-native';
+import Image from './Image';
+import LinearGradient from './Gradient';
+import SafeAreaView from './SafeArea';
 import { PokemonDetailData } from '../types/pokemon';
 import { getTypeGradientColors, hexToRgba } from '../utils/typeColors';
 import { PokemonStatsComponent } from './PokemonStatsComponent';
@@ -17,18 +17,26 @@ export default function PokemonCardComponent({
   pokemon,
 }: PokemonCardComponentProps) {
   const gradientColors = getTypeGradientColors(pokemon.types);
-  const accentColor = gradientColors[0];
+  const accentColor = gradientColors[1];
   const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
 
   return (
-    <LinearGradient colors={gradientColors} style={styles.fullscreen}>
-      <SafeAreaView style={styles.relativeFlex} edges={['top']}>
-        {/* Top Info Header */}
-        <View className="flex-row justify-between items-start px-6 pt-4 z-10">
-          <View>
-            <Text style={styles.nameText}>{pokemon.name}</Text>
+    <LinearGradient
+      colors={gradientColors}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      className={styles.fullscreen}>
+      <View className={styles.relativeFlex}>
+        <View className={styles.header}>
+          <View className={styles.leftHeaderContent}>
+            <View className={styles.nameRow}>
+              <Text style={styles.nameText}>{pokemon.name}</Text>
+              <Text className={styles.idText}>
+                #{String(pokemon.id).padStart(3, '0')}
+              </Text>
+            </View>
 
-            <View className="flex-row mt-2.5">
+            <View className={styles.typeList}>
               {pokemon.types.map((type, index) => (
                 <GlassView
                   key={type}
@@ -38,24 +46,16 @@ export default function PokemonCardComponent({
                     styles.typeBadge,
                     index > 0 && styles.typeBadgeSpacing,
                   ]}>
-                  <Text className="text-xs font-bold text-white uppercase tracking-wider">
-                    {type}
-                  </Text>
+                  <Text className={styles.typeText}>{type}</Text>
                 </GlassView>
               ))}
             </View>
           </View>
 
-          <Text className="text-2xl font-extrabold text-white/60 pt-1">
-            #{String(pokemon.id).padStart(3, '0')}
-          </Text>
+          <PokemonFavouriteComponent />
         </View>
 
-        {/* Favorite Button Overlay */}
-        <PokemonFavouriteComponent />
-
-        {/* Artwork Wrapper */}
-        <View style={styles.imageWrapper}>
+        <View className={styles.imageWrapper}>
           <GlassView
             intensity={30}
             borderRadius={32}
@@ -70,50 +70,54 @@ export default function PokemonCardComponent({
           </GlassView>
         </View>
 
-        {/* Bottom White Panel */}
         <View style={styles.bottomWhitePanel}>
-          <View className="flex-row justify-around border-b border-slate-100 pb-5 mb-5">
-            <View className="items-center">
-              <Text className="text-base font-extrabold text-slate-800">
+          <View className={styles.statsHeader}>
+            <View className={styles.statItem}>
+              <Text className={styles.statValue}>
                 {(pokemon.weight / 10).toFixed(1)} kg
               </Text>
-              <Text className="text-xs font-bold text-slate-400 mt-1 tracking-wider">
-                WEIGHT
-              </Text>
+              <Text className={styles.statLabel}>WEIGHT</Text>
             </View>
-            <View className="items-center">
-              <Text className="text-base font-extrabold text-slate-800">
+            <View className={styles.statItem}>
+              <Text className={styles.statValue}>
                 {(pokemon.height / 10).toFixed(1)} m
               </Text>
-              <Text className="text-xs font-bold text-slate-400 mt-1 tracking-wider">
-                HEIGHT
-              </Text>
+              <Text className={styles.statLabel}>HEIGHT</Text>
             </View>
           </View>
 
-          <Text className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">
-            Base Stats
-          </Text>
-          <PokemonStatsComponent stats={pokemon.stats} accentColor={accentColor} />
+          <Text className={styles.sectionTitle}>Base Stats</Text>
+          <PokemonStatsComponent
+            stats={pokemon.stats}
+            accentColor={accentColor}
+          />
         </View>
-      </SafeAreaView>
+      </View>
     </LinearGradient>
   );
 }
 
-const styles = StyleSheet.create({
-  fullscreen: {
-    flex: 1,
-  },
-  relativeFlex: {
-    flex: 1,
-    position: 'relative',
-  },
+const styles = {
+  fullscreen: 'flex-1',
+  relativeFlex: 'flex-1 relative',
+  header: 'flex-row justify-between items-center px-4 pt-4 z-10',
+  leftHeaderContent: 'flex-1 pr-3',
+  nameRow: 'flex-row items-center gap-2',
+  typeList: 'flex-row mt-2.5',
+  typeText: 'text-xs font-bold text-white uppercase tracking-wider',
+  idText: 'text-base font-extrabold text-white/60',
+  imageWrapper: 'flex-1 items-center justify-center z-10 my-1 overflow-hidden',
+  statsHeader: 'flex-row justify-around border-b border-slate-100 pb-5 mb-5',
+  statItem: 'items-center',
+  statValue: 'text-base font-extrabold text-slate-800',
+  statLabel: 'text-xs font-bold text-slate-400 mt-1 tracking-wider',
+  sectionTitle:
+    'text-xs font-black text-slate-400 uppercase tracking-widest mb-3',
   nameText: {
-    fontSize: 34,
-    fontWeight: '900',
+    fontSize: 28,
+    fontWeight: '900' as const,
     color: '#ffffff',
-    textTransform: 'capitalize',
+    textTransform: 'capitalize' as const,
     letterSpacing: 0.5,
     textShadowColor: 'rgba(0,0,0,0.25)',
     textShadowOffset: { width: 0, height: 2 },
@@ -124,24 +128,18 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.35)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
   },
   typeBadgeSpacing: {
     marginLeft: 8,
   },
-  imageWrapper: {
-    flex: 1.2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 20,
-    marginVertical: 12,
-  },
   artworkCard: {
-    width: 240,
-    height: 240,
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: '78%' as const,
+    maxWidth: 260,
+    aspectRatio: 1,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.35)',
     shadowColor: '#000',
@@ -151,16 +149,15 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   artworkImage: {
-    width: 200,
-    height: 200,
+    width: '82%' as const,
+    height: '82%' as const,
   },
   bottomWhitePanel: {
-    flex: 1.5,
     backgroundColor: '#ffffff',
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     paddingHorizontal: 24,
-    paddingTop: 32,
+    paddingTop: 28,
     paddingBottom: 24,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
@@ -168,4 +165,4 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 6,
   },
-});
+};
