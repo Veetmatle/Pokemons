@@ -1,9 +1,10 @@
 import { View, ActivityIndicator, Text } from 'react-native';
-import PokemonListItem from '../components/PokemonListItem';
+import PokemonListItemComponent from '../components/PokemonListItemComponent';
 import { PokemonListScreenProps } from '../navigation/types';
 import { usePokemonInfinite } from '../hooks/usePokemonInfinite';
 import { LegendList } from '@legendapp/list/react-native';
 import { useCallback } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function PokemonListScreen({
   navigation,
@@ -11,7 +12,6 @@ export default function PokemonListScreen({
   const {
     pokemons,
     isLoading,
-    isError,
     hasNextPage,
     isFetchingNextPage,
     isRefetching,
@@ -20,11 +20,13 @@ export default function PokemonListScreen({
   } = usePokemonInfinite();
 
   const handleItemPress = useCallback(
-    (pokemonName: string, pokemonId: number) => {
-      navigation.navigate('PokemonDetail', { pokemonName, pokemonId });
+    (pokemonName: string) => {
+      navigation.navigate('PokemonDetail', { pokemonName });
     },
     [navigation],
   );
+
+  const insets = useSafeAreaInsets();
 
   if (isLoading) {
     return (
@@ -34,22 +36,19 @@ export default function PokemonListScreen({
     );
   }
 
-  if (isError) {
-    return (
-      <View className={styles.centerContainer}>
-        <Text className={styles.errorText}>Pokemons could not be fetched</Text>
-      </View>
-    );
-  }
-
   return (
-    <View className={styles.container}>
+    <View className={styles.container} style={{ paddingTop: insets.top }}>
       <LegendList
         recycleItems={true}
         data={pokemons}
+        ListEmptyComponent={
+          <View className={styles.centerContainer}>
+            <Text className={styles.errorText}>No pokemons found</Text>
+          </View>
+        }
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
-          <PokemonListItem
+          <PokemonListItemComponent
             name={item.name}
             id={item.id}
             onPress={handleItemPress}
@@ -82,5 +81,5 @@ const styles = {
   centerContainer:
     'flex-1 justify-center items-center bg-white dark:bg-[#0F1117]',
   errorText: 'font-bold text-base text-red-800 dark:text-red-400',
-  container: 'flex-1 bg-amber-300 dark:bg-[#0F1117] pt-2.5',
+  container: 'flex-1 bg-amber-85 dark:bg-[#0F1117] pt-2.5',
 };

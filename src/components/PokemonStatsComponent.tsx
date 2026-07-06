@@ -31,7 +31,7 @@ export const PokemonStatsComponent = ({
         return (
           <View
             key={stat.name}
-            className="flex-row items-center justify-between">
+            className="flex-row items-center justify-between px-6 py-1">
             <Text className="w-12 text-sm font-bold text-slate-500">
               {formatStatName(stat.name)}
             </Text>
@@ -43,7 +43,10 @@ export const PokemonStatsComponent = ({
             <View className="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden">
               <View
                 className="h-full rounded-full"
-                style={{ width: `${percentage}%`, backgroundColor: accentColor }}
+                style={{
+                  width: `${percentage}%`,
+                  backgroundColor: accentColor,
+                }}
               />
             </View>
           </View>

@@ -5,6 +5,8 @@ import FavoritePokemonScreen from '../screens/FavoritePokemonScreen';
 import { AppTabParamList } from './types';
 import MapScreen from '../screens/MapScreen';
 import CameraScreen from '../screens/CameraScreen';
+import { StyleSheet } from 'react-native';
+import { GlassView } from '../components/GlassView';
 
 const Tab = createBottomTabNavigator<AppTabParamList>();
 
@@ -29,6 +31,26 @@ export default function AppNavigator() {
         },
         tabBarActiveTintColor: '#ff0000',
         tabBarInactiveTintColor: 'gray',
+        tabBarStyle: {
+          position: 'absolute',
+          left: 20,
+          right: 20,
+          height: 64,
+          borderRadius: 32,
+          backgroundColor: 'transparent',
+          borderTopWidth: 0,
+          elevation: 0,
+          shadowColor: '#000',
+          shadowOffset: {
+            width: 0,
+            height: 8,
+          },
+          shadowOpacity: 0.15,
+          shadowRadius: 16,
+        },
+        tabBarBackground: () => (
+          <GlassView style={StyleSheet.absoluteFill} borderRadius={32} />
+        ),
       })}>
       <Tab.Screen
         name="PokemonTab"
