@@ -1,7 +1,8 @@
-import { Text, View, TouchableOpacity, useColorScheme } from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import Image from './Image';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import Feather from './Icon';
+import { colors, radius, shadow, spacing, typography } from '../styles/globalStyles';
 
 const ImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/`;
 
@@ -17,43 +18,79 @@ const PokemonListItemComponent = ({
   onPress,
 }: PokemonListItemProps) => {
   const imageUrl = `${ImageUrl}${id}.png`;
-  const isDark = useColorScheme() === 'dark';
-  const iconColor = isDark ? '#64748b' : '#b45309';
+  const [scale] = useState(() => new Animated.Value(1));
+
+  const animateTo = (toValue: number) => {
+    Animated.spring(scale, {
+      toValue,
+      speed: 40,
+      bounciness: 6,
+      useNativeDriver: true,
+    }).start();
+  };
 
   return (
-    <TouchableOpacity className={styles.card} onPress={() => onPress(name, id)}>
-      <View className={styles.imageWrapper}>
-        <Image
-          className={styles.image}
-          source={{ uri: imageUrl }}
-          transition={250}
-          cachePolicy="memory-disk"
-        />
-      </View>
+    <Pressable
+      onPress={() => onPress(name, id)}
+      onPressIn={() => animateTo(0.96)}
+      onPressOut={() => animateTo(1)}
+    >
+      <Animated.View style={[styles.card, { transform: [{ scale }] }]}>
+        <View style={styles.imageWrapper}>
+          <Image
+            style={styles.image}
+            source={{ uri: imageUrl }}
+            transition={250}
+            cachePolicy="memory-disk"
+          />
+        </View>
 
-      <View className={styles.textContainer}>
-        <Text className={styles.idText}>#{id.toString().padStart(3, '0')}</Text>
-        <Text className={styles.nameText}>{name.toUpperCase()}</Text>
-      </View>
+        <View style={styles.textContainer}>
+          <Text style={typography.label}>#{id.toString().padStart(3, '0')}</Text>
+          <Text style={typography.title}>{name.toUpperCase()}</Text>
+        </View>
 
-      <Feather
-        name="chevron-right"
-        size={22}
-        color={iconColor}
-        className={styles.chevron}
-      />
-    </TouchableOpacity>
+        <Feather name="chevron-right" size={22} color={colors.accent} style={styles.chevron} />
+      </Animated.View>
+    </Pressable>
   );
 };
 
 export default memo(PokemonListItemComponent);
 
-const styles = {
-  card: 'flex-row items-center rounded-2xl bg-[#FCF9F2] p-3 mx-4 my-1.5 border border-amber-950/5 shadow-md shadow-amber-900/5',
-  imageWrapper: 'bg-white/80 rounded-xl p-1 border border-amber-900/5',
-  image: 'h-[70px] w-[70px]',
-  textContainer: 'flex-1 ml-4 justify-center',
-  idText: 'text-xs font-bold text-amber-700 tracking-widest',
-  nameText: 'text-base font-bold text-slate-800',
-  chevron: 'pr-1 ml-auto opacity-80',
-};
+const styles = StyleSheet.create({
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: radius.lg,
+    backgroundColor: colors.card,
+    padding: spacing.md,
+    marginHorizontal: spacing.lg,
+    marginVertical: spacing.xs + 2,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...shadow('md'),
+  },
+  imageWrapper: {
+    backgroundColor: 'rgba(255,255,255,0.8)',
+    borderRadius: radius.md,
+    padding: spacing.xs,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  image: {
+    height: 70,
+    width: 70,
+  },
+  textContainer: {
+    flex: 1,
+    marginLeft: spacing.lg,
+    justifyContent: 'center',
+    gap: 2,
+  },
+  chevron: {
+    marginLeft: 'auto',
+    paddingRight: spacing.xs,
+    opacity: 0.8,
+  },
+});
