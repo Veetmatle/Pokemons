@@ -5,6 +5,7 @@ import {
   ViewProps,
   StyleProp,
   ViewStyle,
+  Platform,
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import {
@@ -44,6 +45,9 @@ export function GlassView({
       <BlurView
         intensity={intensity}
         tint="light"
+        experimentalBlurMethod={
+          Platform.OS === 'android' ? 'dimezisBlurView' : undefined
+        }
         style={StyleSheet.absoluteFill}
       />
       <View

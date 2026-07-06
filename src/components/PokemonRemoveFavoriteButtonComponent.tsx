@@ -32,8 +32,15 @@ export default function PokemonRemoveFavouriteButtonComponent({
   };
 
   return (
-    <Pressable onPress={handlePress} hitSlop={10}>
-      <Ionicons name="trash-outline" size={48} color="red" />
-    </Pressable>
+    <>
+      <Pressable
+        onPress={handlePress}
+        hitSlop={10}
+        style={({ pressed }) => [
+          pressed && { opacity: 0.6, transform: [{ scale: 0.92 }] },
+        ]}>
+        <Ionicons name="heart-dislike-outline" size={48} color="red" />
+      </Pressable>
+    </>
   );
 }

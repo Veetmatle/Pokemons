@@ -1,27 +1,16 @@
 import React from 'react';
-import { Pressable, View, Text, StyleSheet, Alert } from 'react-native';
+import { Pressable, View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { setFavoritePokemon } from '../services/favoriteStorage';
-import { checkFavouritePokemonExists } from '../services/pokemonService';
+import {
+  setFavoritePokemon,
+  checkFavouritePokemonExists,
+  askUserToReplaceFavorite,
+} from '../services/favoriteStorage';
 
 interface PokemonFavouriteButtonComponentProps {
   pokemonId: number;
   pokemonName: string;
 }
-
-const askUserToReplaceFavorite = (): Promise<boolean> => {
-  return new Promise(resolve => {
-    Alert.alert(
-      'Replace favorite?',
-      'Are you sure you want to replace this Pokemon for favorites?',
-      [
-        { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
-        { text: 'Replace', style: 'destructive', onPress: () => resolve(true) },
-      ],
-      { onDismiss: () => resolve(false) },
-    );
-  });
-};
 
 const PokemonFavouriteButtonComponent = ({
   pokemonId,
@@ -29,7 +18,7 @@ const PokemonFavouriteButtonComponent = ({
 }: PokemonFavouriteButtonComponentProps) => {
   const handlePress = async () => {
     try {
-      const favoriteExists = await checkFavouritePokemonExists(pokemonName);
+      const favoriteExists = await checkFavouritePokemonExists();
       if (favoriteExists === true) {
         const userWantsToReplace = await askUserToReplaceFavorite();
         if (!userWantsToReplace) return;
@@ -45,10 +34,10 @@ const PokemonFavouriteButtonComponent = ({
     <View style={styles.container}>
       <Pressable onPress={handlePress} hitSlop={10} style={styles.button}>
         <View style={styles.iconWrapper}>
-          <Ionicons name="heart" size={40} color="red" />
+          <Ionicons name="heart" size={48} color="red" />
           <Ionicons
             name="heart-outline"
-            size={40}
+            size={48}
             color="black"
             style={styles.outline}
           />
@@ -65,15 +54,15 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 40,
+    marginTop: 40,
   },
   button: {
     alignItems: 'center',
   },
   iconWrapper: {
     position: 'relative',
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
   },
   outline: {
     position: 'absolute',
@@ -82,7 +71,7 @@ const styles = StyleSheet.create({
   },
   text: {
     marginTop: 4,
-    fontSize: 12,
+    fontSize: 20,
     color: '#000',
     fontWeight: '600',
     textAlign: 'center',

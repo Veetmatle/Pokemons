@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
 
 const FAVORITE_KEY = 'favoritePokemon';
 
@@ -25,4 +26,28 @@ export const setFavoritePokemon = async (
 
 export const clearFavoritePokemon = async (): Promise<void> => {
   await AsyncStorage.removeItem(FAVORITE_KEY);
+};
+
+export const askUserToReplaceFavorite = (): Promise<boolean> => {
+  return new Promise(resolve => {
+    Alert.alert(
+      'Replace favorite?',
+      'Are you sure you want to replace this Pokemon for favorites?',
+      [
+        { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
+        { text: 'Replace', style: 'destructive', onPress: () => resolve(true) },
+      ],
+      { onDismiss: () => resolve(false) },
+    );
+  });
+};
+
+export const checkFavouritePokemonExists = async (): Promise<boolean> => {
+  try {
+    const favoritePokemon = await getFavoritePokemon();
+    return favoritePokemon !== null;
+  } catch (error) {
+    console.error('PokemonService checkFavouritePokemonExists error:', error);
+    return false;
+  }
 };

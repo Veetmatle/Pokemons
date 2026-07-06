@@ -17,7 +17,6 @@ export default function PokemonCardComponent({
   pokemon,
   desc,
 }: PokemonCardComponentProps) {
-  const gradientColors = getTypeGradientColors(pokemon.types);
   const imageUrl = `${ImageUrl}${pokemon.id}.png`;
 
   return (

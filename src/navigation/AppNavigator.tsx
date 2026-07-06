@@ -63,7 +63,11 @@ export default function AppNavigator() {
       <Tab.Screen
         name="Favorite"
         component={FavoritePokemonScreen}
-        options={{ tabBarLabel: 'Favorite', headerShown: false }}
+        options={{
+          tabBarLabel: 'Favorite',
+          headerShown: true,
+          title: 'Favourite Pokemon',
+        }}
       />
       <Tab.Screen
         name="Map"

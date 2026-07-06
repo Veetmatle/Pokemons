@@ -4,7 +4,6 @@ import {
   mapPokeAPIToPokemonData,
   mapPokeAPIDetailToPokemonDetailData,
 } from '../mappers/pokemonMappers';
-import { getFavoritePokemon } from './favoriteStorage';
 
 const BASE_URL = 'https://pokeapi.co/api/v2';
 
@@ -53,17 +52,5 @@ export const fetchPokemonDetail = async (
   } catch (error) {
     console.error('PokemonService fetchPokemonDetail error:', error);
     throw error;
-  }
-};
-
-export const checkFavouritePokemonExists = async (
-  pokemonName: string,
-): Promise<boolean> => {
-  try {
-    const favoritePokemon = await getFavoritePokemon();
-    return favoritePokemon !== null;
-  } catch (error) {
-    console.error('PokemonService checkFavouritePokemonExists error:', error);
-    return false;
   }
 };

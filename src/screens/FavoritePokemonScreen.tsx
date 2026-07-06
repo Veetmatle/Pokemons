@@ -11,15 +11,12 @@ import { useFocusEffect } from '@react-navigation/native';
 import { usePokemonDetail } from '../hooks/usePokemonDetail';
 import PokemonCardComponent from '../components/PokemonCardComponent';
 import PokemonRemoveFavouriteButtonComponent from '../components/PokemonRemoveFavoriteButtonComponent';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function FavoritePokemonScreen() {
   const [favoritePokemon, setFavoritePokemonState] = useState<null | {
     id: number;
     name: string;
   }>(null);
-
-  const insets = useSafeAreaInsets();
 
   const [isLoading, setIsLoading] = useState(true);
   const {
@@ -47,7 +44,7 @@ export default function FavoritePokemonScreen() {
 
   if (isLoading && (favoritePokemon !== null || isPokemonLoading)) {
     return (
-      <View style={styles.container}>
+      <View style={styles.emptyContainer}>
         <ActivityIndicator size="large" color="#1f2937" />
       </View>
     );
@@ -55,15 +52,15 @@ export default function FavoritePokemonScreen() {
 
   if (favoritePokemon === null) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.text}>No favorite pokemons found</Text>
+      <View style={styles.emptyContainer}>
+        <Text style={styles.text}>No favourite pokemons found</Text>
       </View>
     );
   }
 
   if (isPokemonError || !pokemon) {
     return (
-      <View style={styles.container}>
+      <View style={styles.emptyContainer}>
         <Text style={styles.text}>Could not load Pokemon details</Text>
       </View>
     );
@@ -71,17 +68,14 @@ export default function FavoritePokemonScreen() {
 
   return (
     <ScrollView>
-      <View style={{ flex: 1, paddingTop: insets.top }}>
-        <PokemonCardComponent
-          pokemon={pokemon}
-          desc={`Fav Pokemon: ${pokemon.name}`}
-        />
+      <View style={{ ...styles.container }}>
+        <PokemonCardComponent pokemon={pokemon} desc={`${pokemon.name}`} />
       </View>
       <View style={styles.removeButton}>
         <PokemonRemoveFavouriteButtonComponent
           onRemoved={() => setFavoritePokemonState(null)}
         />
-        <Text>Remove from fav</Text>
+        <Text style={styles.text}>Remove from fav</Text>
       </View>
     </ScrollView>
   );
@@ -90,9 +84,12 @@ export default function FavoritePokemonScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f3f4f6',
+  },
+  emptyContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
   },
   text: {
     fontSize: 20,
@@ -100,7 +97,7 @@ const styles = StyleSheet.create({
     color: '#1f2937',
   },
   removeButton: {
-    marginTop: 20,
+    marginTop: 40,
     padding: 10,
     alignItems: 'center',
   },
