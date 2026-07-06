@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, ActivityIndicator, Text } from 'react-native';
+import { View, ActivityIndicator, Text, ScrollView } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { PokemonStackParamList } from '../navigation/types';
 import { usePokemonDetail } from '../hooks/usePokemonDetail';
 import PokemonCardComponent from '../components/PokemonCardComponent';
+
 import PokemonFavouriteButtonComponent from '../components/PokemonFavouriteButtonComponent';
 
 type Props = NativeStackScreenProps<PokemonStackParamList, 'PokemonDetail'>;
@@ -33,8 +34,14 @@ export default function PokemonDetailScreen({ route }: Props) {
   }
 
   return (
-    <View className="flex-1 bg-slate-50">
+    <ScrollView
+      className="flex-1 bg-slate-50"
+      contentContainerStyle={{ paddingBottom: 40 }}>
       <PokemonCardComponent pokemon={pokemon} />
-    </View>
+      <PokemonFavouriteButtonComponent
+        pokemonId={pokemon.id}
+        pokemonName={pokemon.name}
+      />
+    </ScrollView>
   );
 }

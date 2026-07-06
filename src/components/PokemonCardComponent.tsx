@@ -10,10 +10,12 @@ const ImageUrl =
 
 interface PokemonCardComponentProps {
   pokemon: PokemonDetailData;
+  desc?: string;
 }
 
 export default function PokemonCardComponent({
   pokemon,
+  desc,
 }: PokemonCardComponentProps) {
   const gradientColors = getTypeGradientColors(pokemon.types);
   const imageUrl = `${ImageUrl}${pokemon.id}.png`;
@@ -21,7 +23,7 @@ export default function PokemonCardComponent({
   return (
     <View>
       <Text className="text-lg font-bold text-center p-8">
-        Pokemon details for {pokemon.name}
+        {desc || `Pokemon details for ${pokemon.name}`}
       </Text>
       <Image source={{ uri: imageUrl }} className={styles.image} />
       <PokemonStatsComponent stats={pokemon.stats} />
