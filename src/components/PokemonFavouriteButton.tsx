@@ -12,12 +12,14 @@ import { showSuccessToast } from '../utils/toast';
 interface PokemonFavouriteButtonProps {
   pokemonId: number;
   pokemonName: string;
+  isFavouriteScreen: boolean;
   onPress?: () => void;
 }
 
 const PokemonFavouriteButton = ({
   pokemonId,
   pokemonName,
+  isFavouriteScreen,
   onPress,
 }: PokemonFavouriteButtonProps) => {
   const scaleValue = useSharedValue(1);
@@ -38,7 +40,7 @@ const PokemonFavouriteButton = ({
   const handlePress = async () => {
     try {
       if (isFavorite) {
-        await removeFavorite();
+        await removeFavorite(isFavouriteScreen);
         showSuccessToast('Pokemon removed from fav', 'top');
       } else {
         await addFavorite(pokemonName);

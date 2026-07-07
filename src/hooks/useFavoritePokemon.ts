@@ -22,8 +22,12 @@ export const useFavoritePokemon = (pokemonId: number) => {
     }, [pokemonId]),
   );
 
-  const removeFavorite = async () => {
-    const userWantsToRemove = await askUserToConfirmFavoriteRemove();
+  const removeFavorite = async (isMainScreen: boolean) => {
+    let userWantsToRemove = true;
+    if (isMainScreen) {
+      userWantsToRemove = await askUserToConfirmFavoriteRemove();
+      if (!userWantsToRemove) return;
+    }
     if (!userWantsToRemove) return;
     await clearFavoritePokemon();
     setIsFavorite(false);

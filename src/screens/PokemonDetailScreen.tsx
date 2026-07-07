@@ -47,6 +47,7 @@ export default function PokemonDetailScreen({ route }: Props) {
       <PokemonFavouriteButton
         pokemonId={pokemon.id}
         pokemonName={pokemon.name}
+        isFavouriteScreen={false}
       />
     </ScrollView>
   );

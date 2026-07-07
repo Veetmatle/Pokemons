@@ -77,6 +77,7 @@ export default function FavoritePokemonScreen() {
       <PokemonFavouriteButton
         pokemonId={favoritePokemon.id}
         pokemonName={favoritePokemon.name}
+        isFavouriteScreen={true}
         onPress={() => setFavoritePokemonState(null)}
       />
     </ScrollView>

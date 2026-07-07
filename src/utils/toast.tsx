@@ -1,5 +1,5 @@
 import Toast, { BaseToast, BaseToastProps } from 'react-native-toast-message';
-import { typography, globalStyles } from '../styles/globalStyles';
+import { typography, globalStyles, spacing } from '../styles/globalStyles';
 
 export const showSuccessToast = (
   text1: string,
@@ -21,13 +21,18 @@ const toastConfig = {
       style={[
         globalStyles.card,
         {
-          borderLeftColor: 'grey',
+          borderLeftWidth: 0,
           flexDirection: 'row',
           alignItems: 'center',
+          justifyContent: 'center',
         },
       ]}
-      contentContainerStyle={{ marginTop: 20 }}
-      text1Style={[typography.label, { color: 'black' }]}
+      contentContainerStyle={{
+        marginTop: spacing.md,
+        alignItems: 'center',
+      }}
+      text1Style={[typography.label, { textAlign: 'center' }]}
+      text1NumberOfLines={2}
     />
   ),
 };
