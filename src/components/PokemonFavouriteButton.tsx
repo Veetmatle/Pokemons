@@ -5,7 +5,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
-import { useFavoritePokemon } from '../hooks/useFavoritePokemon';
+import { useFavouritePokemon } from '../hooks/useFavouritePokemon';
 import { colors, radius, shadow, spacing } from '../styles/globalStyles';
 import { showSuccessToast } from '../utils/toast';
 
@@ -23,8 +23,8 @@ const PokemonFavouriteButton = ({
   onPress,
 }: PokemonFavouriteButtonProps) => {
   const scaleValue = useSharedValue(1);
-  const { isFavorite, addFavorite, removeFavorite } =
-    useFavoritePokemon(pokemonId);
+  const { isFavourite, addFavourite, removeFavourite } =
+    useFavouritePokemon(pokemonId);
 
   const animateTo = (toValue: number) => {
     scaleValue.value = withSpring(toValue, {
@@ -39,15 +39,15 @@ const PokemonFavouriteButton = ({
 
   const handlePress = async () => {
     try {
-      if (isFavorite) {
-        await removeFavorite(isFavouriteScreen);
+      if (isFavourite) {
+        await removeFavourite(isFavouriteScreen);
         showSuccessToast('Pokemon removed from fav', 'top');
       } else {
-        await addFavorite(pokemonName);
+        await addFavourite(pokemonName);
         showSuccessToast('Pokemon added to fav', 'top');
       }
     } catch (error) {
-      console.error('Failed to update favorite pokemon ', error);
+      console.error('Failed to update favourite pokemon ', error);
     }
 
     if (onPress) onPress();
@@ -63,16 +63,16 @@ const PokemonFavouriteButton = ({
         <View
           style={[
             styles.iconBox,
-            { backgroundColor: isFavorite ? colors.danger : colors.accent },
+            { backgroundColor: isFavourite ? colors.danger : colors.accent },
           ]}>
           <Ionicons
-            name={isFavorite ? 'heart-dislike' : 'heart'}
+            name={isFavourite ? 'heart-dislike' : 'heart'}
             size={22}
             color={colors.surface}
           />
         </View>
         <Text style={styles.text}>
-          {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+          {isFavourite ? 'Remove from Favourites' : 'Add to Favourites'}
         </Text>
       </Animated.View>
     </Pressable>

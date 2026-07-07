@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import PokemonStackNavigator from './PokemonStackNavigator';
-import FavoritePokemonScreen from '../screens/FavoritePokemonScreen';
+import FavouritePokemonScreen from '../screens/FavouritePokemonScreen';
 import { AppTabParamList } from './types';
 import MapScreen from '../screens/MapScreen';
 import CameraScreen from '../screens/CameraScreen';
@@ -24,7 +24,7 @@ export default function AppNavigator() {
 
             if (route.name === 'PokemonTab') {
               iconName = focused ? 'list' : 'list-outline';
-            } else if (route.name === 'Favorite') {
+            } else if (route.name === 'Favourite') {
               iconName = focused ? 'heart' : 'heart-outline';
             } else if (route.name === 'Map') {
               iconName = focused ? 'map' : 'map-outline';
@@ -70,10 +70,10 @@ export default function AppNavigator() {
           }}
         />
         <Tab.Screen
-          name="Favorite"
-          component={FavoritePokemonScreen}
+          name="Favourite"
+          component={FavouritePokemonScreen}
           options={{
-            tabBarLabel: 'Favorite',
+            tabBarLabel: 'Favourite',
             headerShown: true,
             title: 'Favourite Pokemon',
           }}

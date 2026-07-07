@@ -1,16 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 
-const FAVORITE_KEY = 'favoritePokemon';
+const FAVOURITE_KEY = 'favouritePokemon';
 
-export interface FavoritePokemon {
+export interface FavouritePokemon {
   id: number;
   name: string;
 }
 
-export const getFavoritePokemon = async (): Promise<FavoritePokemon | null> => {
+export const getFavouritePokemon = async (): Promise<FavouritePokemon | null> => {
   try {
-    const jsonValue = await AsyncStorage.getItem(FAVORITE_KEY);
+    const jsonValue = await AsyncStorage.getItem(FAVOURITE_KEY);
     return jsonValue !== null ? JSON.parse(jsonValue) : null;
   } catch (e) {
     console.error('Reading fav poke from storage', e);
@@ -18,20 +18,20 @@ export const getFavoritePokemon = async (): Promise<FavoritePokemon | null> => {
   }
 };
 
-export const setFavoritePokemon = async (
-  pokemon: FavoritePokemon,
+export const setFavouritePokemon = async (
+  pokemon: FavouritePokemon,
 ): Promise<void> => {
-  await AsyncStorage.setItem(FAVORITE_KEY, JSON.stringify(pokemon));
+  await AsyncStorage.setItem(FAVOURITE_KEY, JSON.stringify(pokemon));
 };
 
-export const clearFavoritePokemon = async (): Promise<void> => {
-  await AsyncStorage.removeItem(FAVORITE_KEY);
+export const clearFavouritePokemon = async (): Promise<void> => {
+  await AsyncStorage.removeItem(FAVOURITE_KEY);
 };
 
-export const askUserToReplaceFavorite = (): Promise<boolean> => {
+export const askUserToReplaceFavourite = (): Promise<boolean> => {
   return new Promise(resolve => {
     Alert.alert(
-      'Replace favorite?',
+      'Replace favourite?',
       'You sure want to replace fav poke?',
       [
         { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
@@ -42,10 +42,10 @@ export const askUserToReplaceFavorite = (): Promise<boolean> => {
   });
 };
 
-export const askUserToConfirmFavoriteRemove = (): Promise<boolean> =>
+export const askUserToConfirmFavouriteRemove = (): Promise<boolean> =>
   new Promise(resolve => {
     Alert.alert(
-      'Remove favorite?',
+      'Remove favourite?',
       'Are you sure you want to remove favourite?',
       [
         { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
