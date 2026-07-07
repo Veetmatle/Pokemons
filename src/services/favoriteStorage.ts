@@ -42,6 +42,7 @@ export const askUserToReplaceFavorite = (): Promise<boolean> => {
   });
 };
 
+// do wyniesienia na zewnatrz, react native toast message zamist alertu
 export const checkFavouritePokemonExists = async (): Promise<boolean> => {
   try {
     const favoritePokemon = await getFavoritePokemon();

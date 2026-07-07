@@ -4,7 +4,13 @@ import Gradient from './Gradient';
 import { PokemonDetailData } from '../types/pokemon';
 import { getTypeGradientColors, getTypeAccentColor } from '../utils/typeColors';
 import { PokemonStatsComponent } from './PokemonStatsComponent';
-import { colors, radius, shadow, spacing, typography } from '../styles/globalStyles';
+import {
+  colors,
+  radius,
+  shadow,
+  spacing,
+  typography,
+} from '../styles/globalStyles';
 
 const ImageUrl =
   'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/';
@@ -24,8 +30,14 @@ export default function PokemonCardComponent({
       <Gradient
         colors={getTypeGradientColors(pokemon.types)}
         style={styles.header}>
-        <Text style={styles.idBadge}>#{pokemon.id.toString().padStart(3, '0')}</Text>
-        <Image source={{ uri: imageUrl }} style={styles.image} />
+        <Text style={styles.idBadge}>
+          #{pokemon.id.toString().padStart(3, '0')}
+        </Text>
+        <Image
+          source={{ uri: imageUrl }}
+          style={styles.image}
+          transition={400}
+        />
       </Gradient>
 
       <View style={styles.body}>
@@ -49,7 +61,10 @@ export default function PokemonCardComponent({
           <Text style={typography.body}>Weight: {pokemon.weight / 10} kg</Text>
         </View>
 
-        <PokemonStatsComponent stats={pokemon.stats} accentColor={accentColor} />
+        <PokemonStatsComponent
+          stats={pokemon.stats}
+          accentColor={accentColor}
+        />
       </View>
     </View>
   );

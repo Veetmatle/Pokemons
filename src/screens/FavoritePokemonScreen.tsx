@@ -16,7 +16,8 @@ import {
   spacing,
   typography,
 } from '../styles/globalStyles';
-import PokemonRemoveFavoriteButtonComponent from '../components/PokemonRemoveFavoriteButtonComponent';
+import PokemonFavouriteButtonComponent from '../components/PokemonFavouriteButtonComponent';
+import { NoFavouritePokemon } from '../components/NoFavouritePokemon';
 
 export default function FavoritePokemonScreen() {
   const [favoritePokemon, setFavoritePokemonState] = useState<null | {
@@ -57,11 +58,7 @@ export default function FavoritePokemonScreen() {
   }
 
   if (favoritePokemon === null) {
-    return (
-      <View style={[globalStyles.screen, globalStyles.centerContainer]}>
-        <Text style={typography.body}>No favourite pokemons found</Text>
-      </View>
-    );
+    return <NoFavouritePokemon />;
   }
 
   if (isPokemonError || !pokemon) {
@@ -77,8 +74,10 @@ export default function FavoritePokemonScreen() {
       style={globalStyles.screen}
       contentContainerStyle={styles.content}>
       <PokemonCardComponent pokemon={pokemon} />
-      <PokemonRemoveFavoriteButtonComponent
-        onRemoved={() => setFavoritePokemonState(null)}
+      <PokemonFavouriteButtonComponent
+        pokemonId={favoritePokemon.id}
+        pokemonName={favoritePokemon.name}
+        onPress={() => setFavoritePokemonState(null)}
       />
     </ScrollView>
   );
@@ -88,5 +87,12 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.lg,
     paddingBottom: spacing.xl,
+  },
+  noFavPokemonContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginLeft: spacing.md,
+    marginRight: spacing.md,
   },
 });

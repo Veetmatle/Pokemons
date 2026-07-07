@@ -50,7 +50,7 @@ export const shadow = (level: 'sm' | 'md' | 'lg') => {
 
 export const typography = StyleSheet.create({
   label: {
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: '700',
     letterSpacing: 1.2,
     color: colors.accent,

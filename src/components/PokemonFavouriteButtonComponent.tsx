@@ -1,4 +1,9 @@
-import { Animated, Pressable, View, Text, StyleSheet } from 'react-native';
+import { Pressable, View, Text, StyleSheet } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
@@ -8,17 +13,20 @@ import {
   handleRemove,
 } from '../services/favoriteStorage';
 import { colors, radius, shadow, spacing } from '../styles/globalStyles';
+import { showSuccessToast } from '../utils/toast';
 
 interface PokemonFavouriteButtonComponentProps {
   pokemonId: number;
   pokemonName: string;
+  onPress?: () => void;
 }
 
 const PokemonFavouriteButtonComponent = ({
   pokemonId,
   pokemonName,
+  onPress,
 }: PokemonFavouriteButtonComponentProps) => {
-  const [scale] = useState(() => new Animated.Value(1));
+  const scaleValue = useSharedValue(1);
   const [isFavorite, setIsFavorite] = useState(false);
 
   useFocusEffect(
@@ -33,24 +41,30 @@ const PokemonFavouriteButtonComponent = ({
   );
 
   const animateTo = (toValue: number) => {
-    Animated.spring(scale, {
-      toValue,
-      speed: 40,
-      bounciness: 6,
-      useNativeDriver: true,
-    }).start();
+    scaleValue.value = withSpring(toValue, {
+      stiffness: 200, // szybkość animacji
+      damping: 15, // bounciness
+    });
   };
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scaleValue.value }],
+  }));
 
   const handlePress = async () => {
     try {
       if (isFavorite) {
         await handleRemove(setIsFavorite);
+        showSuccessToast('Pokemon removed from fav', 'top');
       } else {
         await handleAdd(pokemonId, pokemonName, setIsFavorite);
+        showSuccessToast('Pokemon added to fav', 'top');
       }
     } catch (error) {
-      console.error('Failed to update favorite pokemon:', error);
+      console.error('Failed to update favorite pokemon ', error);
     }
+
+    if (onPress) onPress();
   };
 
   return (
@@ -59,7 +73,7 @@ const PokemonFavouriteButtonComponent = ({
       onPressIn={() => animateTo(0.96)}
       onPressOut={() => animateTo(1)}
       hitSlop={10}>
-      <Animated.View style={[styles.button, { transform: [{ scale }] }]}>
+      <Animated.View style={[styles.button, animatedStyle]}>
         <View
           style={[
             styles.iconBox,

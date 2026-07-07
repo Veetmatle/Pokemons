@@ -1,8 +1,19 @@
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
 import Image from './Image';
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import Feather from './Icon';
-import { colors, radius, shadow, spacing, typography } from '../styles/globalStyles';
+import {
+  colors,
+  radius,
+  shadow,
+  spacing,
+  typography,
+} from '../styles/globalStyles';
 
 const ImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/`;
 
@@ -18,39 +29,49 @@ const PokemonListItemComponent = ({
   onPress,
 }: PokemonListItemProps) => {
   const imageUrl = `${ImageUrl}${id}.png`;
-  const [scale] = useState(() => new Animated.Value(1));
+  const scaleValue = useSharedValue(1);
 
   const animateTo = (toValue: number) => {
-    Animated.spring(scale, {
-      toValue,
-      speed: 40,
-      bounciness: 6,
-      useNativeDriver: true,
-    }).start();
+    scaleValue.value = withSpring(toValue, {
+      stiffness: 300, // szybkość animacji
+      damping: 15, // bounciness
+    });
   };
+
+  // z useAnimatedStyle bezposrednia animacja animated view do docelowej value
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scaleValue.value }],
+    };
+  });
 
   return (
     <Pressable
       onPress={() => onPress(name, id)}
       onPressIn={() => animateTo(0.96)}
-      onPressOut={() => animateTo(1)}
-    >
-      <Animated.View style={[styles.card, { transform: [{ scale }] }]}>
+      onPressOut={() => animateTo(1)}>
+      <Animated.View style={[styles.card, animatedStyle]}>
         <View style={styles.imageWrapper}>
           <Image
             style={styles.image}
             source={{ uri: imageUrl }}
-            transition={250}
             cachePolicy="memory-disk"
           />
         </View>
 
         <View style={styles.textContainer}>
-          <Text style={typography.label}>#{id.toString().padStart(3, '0')}</Text>
+          <Text style={typography.label}>
+            #{id.toString().padStart(3, '0')}
+          </Text>
           <Text style={typography.title}>{name.toUpperCase()}</Text>
         </View>
 
-        <Feather name="chevron-right" size={22} color={colors.accent} style={styles.chevron} />
+        <Feather
+          name="chevron-right"
+          size={22}
+          color={colors.accent}
+          style={styles.chevron}
+        />
       </Animated.View>
     </Pressable>
   );

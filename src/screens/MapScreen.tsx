@@ -51,3 +51,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+// uprawnienia do loka
