@@ -23,6 +23,9 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-image"]
+    "plugins": [
+      "expo-image",
+      "react-native-permissions"
+    ]
   }
 }

@@ -1,12 +1,8 @@
-import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import MapView, {
-  Marker,
-  MapPressEvent,
-  LongPressEvent,
-} from 'react-native-maps';
+import { useState, useEffect } from 'react';
+import { StyleSheet } from 'react-native';
+import MapView, { Marker, LongPressEvent } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
+import { requestLocationPermission } from '../services/mapService';
 interface Coordinate {
   latitude: number;
   longitude: number;
@@ -23,6 +19,11 @@ export default function MapScreen() {
     setSelectedCoordinate(coordinate);
     setMarkerPosition(coordinate);
   };
+
+  useEffect(() => {
+    console.log('XD');
+    //requestLocationPermission();
+  }, []);
 
   return (
     <MapView
