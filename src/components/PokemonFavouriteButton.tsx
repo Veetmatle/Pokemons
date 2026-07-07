@@ -9,17 +9,17 @@ import { useFavoritePokemon } from '../hooks/useFavoritePokemon';
 import { colors, radius, shadow, spacing } from '../styles/globalStyles';
 import { showSuccessToast } from '../utils/toast';
 
-interface PokemonFavouriteButtonComponentProps {
+interface PokemonFavouriteButtonProps {
   pokemonId: number;
   pokemonName: string;
   onPress?: () => void;
 }
 
-const PokemonFavouriteButtonComponent = ({
+const PokemonFavouriteButton = ({
   pokemonId,
   pokemonName,
   onPress,
-}: PokemonFavouriteButtonComponentProps) => {
+}: PokemonFavouriteButtonProps) => {
   const scaleValue = useSharedValue(1);
   const { isFavorite, addFavorite, removeFavorite } =
     useFavoritePokemon(pokemonId);
@@ -107,4 +107,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PokemonFavouriteButtonComponent;
+export default PokemonFavouriteButton;

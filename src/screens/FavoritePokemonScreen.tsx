@@ -9,14 +9,14 @@ import { getFavoritePokemon } from '../services/favoriteStorage';
 import { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { usePokemonDetail } from '../hooks/usePokemonDetail';
-import PokemonCardComponent from '../components/PokemonCardComponent';
+import PokemonCard from '../components/PokemonCard';
 import {
   colors,
   globalStyles,
   spacing,
   typography,
 } from '../styles/globalStyles';
-import PokemonFavouriteButtonComponent from '../components/PokemonFavouriteButtonComponent';
+import PokemonFavouriteButton from '../components/PokemonFavouriteButton';
 import { NoFavouritePokemon } from '../components/NoFavouritePokemon';
 
 export default function FavoritePokemonScreen() {
@@ -73,8 +73,8 @@ export default function FavoritePokemonScreen() {
     <ScrollView
       style={globalStyles.screen}
       contentContainerStyle={styles.content}>
-      <PokemonCardComponent pokemon={pokemon} />
-      <PokemonFavouriteButtonComponent
+      <PokemonCard pokemon={pokemon} />
+      <PokemonFavouriteButton
         pokemonId={favoritePokemon.id}
         pokemonName={favoritePokemon.name}
         onPress={() => setFavoritePokemonState(null)}

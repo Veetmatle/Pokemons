@@ -2,15 +2,15 @@ import { View, Text, StyleSheet } from 'react-native';
 import { PokemonStat } from '../types/pokemon';
 import { colors, spacing } from '../styles/globalStyles';
 
-interface PokemonStatsComponentProps {
+interface PokemonStatsProps {
   stats: PokemonStat[];
   accentColor?: string;
 }
 
-export const PokemonStatsComponent = ({
+export const PokemonStats = ({
   stats,
   accentColor = colors.accent,
-}: PokemonStatsComponentProps) => {
+}: PokemonStatsProps) => {
   const formatStatName = (name: string) => {
     const names: Record<string, string> = {
       hp: 'HP',

@@ -3,7 +3,7 @@ import Image from './Image';
 import Gradient from './Gradient';
 import { PokemonDetailData } from '../types/pokemon';
 import { getTypeGradientColors, getTypeAccentColor } from '../utils/typeColors';
-import { PokemonStatsComponent } from './PokemonStatsComponent';
+import { PokemonStats } from './PokemonStats';
 import {
   colors,
   radius,
@@ -15,13 +15,11 @@ import {
 const ImageUrl =
   'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/';
 
-interface PokemonCardComponentProps {
+interface PokemonCardProps {
   pokemon: PokemonDetailData;
 }
 
-export default function PokemonCardComponent({
-  pokemon,
-}: PokemonCardComponentProps) {
+export default function PokemonCard({ pokemon }: PokemonCardProps) {
   const imageUrl = `${ImageUrl}${pokemon.id}.png`;
   const accentColor = getTypeAccentColor(pokemon.types);
 
@@ -61,10 +59,7 @@ export default function PokemonCardComponent({
           <Text style={typography.body}>Weight: {pokemon.weight / 10} kg</Text>
         </View>
 
-        <PokemonStatsComponent
-          stats={pokemon.stats}
-          accentColor={accentColor}
-        />
+        <PokemonStats stats={pokemon.stats} accentColor={accentColor} />
       </View>
     </View>
   );

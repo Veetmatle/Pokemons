@@ -1,5 +1,5 @@
 import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
-import PokemonListItemComponent from '../components/PokemonListItemComponent';
+import PokemonListItem from '../components/PokemonListItem';
 import { PokemonListScreenProps } from '../navigation/types';
 import { usePokemonInfinite } from '../hooks/usePokemonInfinite';
 import { LegendList } from '@legendapp/list/react-native';
@@ -49,7 +49,7 @@ export default function PokemonListScreen({
         }
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
-          <PokemonListItemComponent
+          <PokemonListItem
             name={item.name}
             id={item.id}
             onPress={handleItemPress}

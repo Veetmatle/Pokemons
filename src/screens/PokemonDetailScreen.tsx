@@ -8,8 +8,8 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { PokemonStackParamList } from '../navigation/types';
 import { usePokemonDetail } from '../hooks/usePokemonDetail';
-import PokemonCardComponent from '../components/PokemonCardComponent';
-import PokemonFavouriteButtonComponent from '../components/PokemonFavouriteButtonComponent';
+import PokemonCard from '../components/PokemonCard';
+import PokemonFavouriteButton from '../components/PokemonFavouriteButton';
 import {
   colors,
   globalStyles,
@@ -43,8 +43,8 @@ export default function PokemonDetailScreen({ route }: Props) {
     <ScrollView
       style={globalStyles.screen}
       contentContainerStyle={styles.content}>
-      <PokemonCardComponent pokemon={pokemon} />
-      <PokemonFavouriteButtonComponent
+      <PokemonCard pokemon={pokemon} />
+      <PokemonFavouriteButton
         pokemonId={pokemon.id}
         pokemonName={pokemon.name}
       />

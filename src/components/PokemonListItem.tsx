@@ -23,7 +23,7 @@ interface PokemonListItemProps {
   onPress: (pokemonName: string, pokemonId: number) => void;
 }
 
-const PokemonListItemComponent = ({
+const PokemonListItem = ({
   name,
   id,
   onPress,
@@ -77,7 +77,7 @@ const PokemonListItemComponent = ({
   );
 };
 
-export default memo(PokemonListItemComponent);
+export default memo(PokemonListItem);
 
 const styles = StyleSheet.create({
   card: {
