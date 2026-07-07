@@ -42,17 +42,6 @@ export const askUserToReplaceFavorite = (): Promise<boolean> => {
   });
 };
 
-// do wyniesienia na zewnatrz, react native toast message zamist alertu
-export const checkFavouritePokemonExists = async (): Promise<boolean> => {
-  try {
-    const favoritePokemon = await getFavoritePokemon();
-    return favoritePokemon !== null;
-  } catch (error) {
-    console.error('PokemonService error:', error);
-    return false;
-  }
-};
-
 export const askUserToConfirmFavoriteRemove = (): Promise<boolean> =>
   new Promise(resolve => {
     Alert.alert(
@@ -69,24 +58,3 @@ export const askUserToConfirmFavoriteRemove = (): Promise<boolean> =>
       { onDismiss: () => resolve(false) },
     );
   });
-
-export const handleRemove = async (setTheState: (value: boolean) => void) => {
-  const userWantsToRemove = await askUserToConfirmFavoriteRemove();
-  if (!userWantsToRemove) return;
-  await clearFavoritePokemon();
-  setTheState(false);
-};
-
-export const handleAdd = async (
-  pokemonId: number,
-  pokemonName: string,
-  setTheState: (value: boolean) => void,
-) => {
-  const favoriteExists = await checkFavouritePokemonExists();
-  if (favoriteExists) {
-    const userWantsToReplace = await askUserToReplaceFavorite();
-    if (!userWantsToReplace) return;
-  }
-  await setFavoritePokemon({ id: pokemonId, name: pokemonName });
-  setTheState(true);
-};

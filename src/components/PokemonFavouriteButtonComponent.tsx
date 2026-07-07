@@ -5,13 +5,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
-import { useCallback, useState } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
-import {
-  getFavoritePokemon,
-  handleAdd,
-  handleRemove,
-} from '../services/favoriteStorage';
+import { useFavoritePokemon } from '../hooks/useFavoritePokemon';
 import { colors, radius, shadow, spacing } from '../styles/globalStyles';
 import { showSuccessToast } from '../utils/toast';
 
@@ -27,18 +21,8 @@ const PokemonFavouriteButtonComponent = ({
   onPress,
 }: PokemonFavouriteButtonComponentProps) => {
   const scaleValue = useSharedValue(1);
-  const [isFavorite, setIsFavorite] = useState(false);
-
-  useFocusEffect(
-    useCallback(() => {
-      const checkIsFavorite = async () => {
-        const favorite = await getFavoritePokemon();
-        setIsFavorite(favorite?.id === pokemonId);
-      };
-
-      checkIsFavorite();
-    }, [pokemonId]),
-  );
+  const { isFavorite, addFavorite, removeFavorite } =
+    useFavoritePokemon(pokemonId);
 
   const animateTo = (toValue: number) => {
     scaleValue.value = withSpring(toValue, {
@@ -54,10 +38,10 @@ const PokemonFavouriteButtonComponent = ({
   const handlePress = async () => {
     try {
       if (isFavorite) {
-        await handleRemove(setIsFavorite);
+        await removeFavorite();
         showSuccessToast('Pokemon removed from fav', 'top');
       } else {
-        await handleAdd(pokemonId, pokemonName, setIsFavorite);
+        await addFavorite(pokemonName);
         showSuccessToast('Pokemon added to fav', 'top');
       }
     } catch (error) {
