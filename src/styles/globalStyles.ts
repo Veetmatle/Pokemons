@@ -9,8 +9,10 @@ export const colors = {
   accentSoft: 'rgba(180, 83, 9, 0.08)',
   textPrimary: '#1E293B',
   textSecondary: '#78350F',
+  textMuted: '#94A3B8',
   danger: '#991B1B',
   shadow: '#78350F',
+  track: '#F1EDE1',
 };
 
 export const spacing = {

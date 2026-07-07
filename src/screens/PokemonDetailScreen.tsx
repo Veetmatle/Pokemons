@@ -1,11 +1,21 @@
-import React from 'react';
-import { View, ActivityIndicator, Text, ScrollView } from 'react-native';
+import {
+  View,
+  ActivityIndicator,
+  Text,
+  ScrollView,
+  StyleSheet,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { PokemonStackParamList } from '../navigation/types';
 import { usePokemonDetail } from '../hooks/usePokemonDetail';
 import PokemonCardComponent from '../components/PokemonCardComponent';
-
 import PokemonFavouriteButtonComponent from '../components/PokemonFavouriteButtonComponent';
+import {
+  colors,
+  globalStyles,
+  spacing,
+  typography,
+} from '../styles/globalStyles';
 
 type Props = NativeStackScreenProps<PokemonStackParamList, 'PokemonDetail'>;
 
@@ -15,28 +25,24 @@ export default function PokemonDetailScreen({ route }: Props) {
 
   if (isLoading) {
     return (
-      <View
-        style={{ flex: 1 }}
-        className="flex-1 justify-center items-center bg-slate-50">
-        <ActivityIndicator size="large" color="#ff0000" />
+      <View style={[globalStyles.screen, globalStyles.centerContainer]}>
+        <ActivityIndicator size="large" color={colors.accent} />
       </View>
     );
   }
 
   if (isError || !pokemon) {
     return (
-      <View className="flex-1 justify-center items-center bg-slate-50">
-        <Text className="text-lg font-bold text-red-500">
-          Could not load Pokemon details.
-        </Text>
+      <View style={[globalStyles.screen, globalStyles.centerContainer]}>
+        <Text style={typography.error}>Could not load Pokemon details :/</Text>
       </View>
     );
   }
 
   return (
     <ScrollView
-      className="flex-1 bg-slate-50"
-      contentContainerStyle={{ paddingBottom: 40 }}>
+      style={globalStyles.screen}
+      contentContainerStyle={styles.content}>
       <PokemonCardComponent pokemon={pokemon} />
       <PokemonFavouriteButtonComponent
         pokemonId={pokemon.id}
@@ -45,3 +51,10 @@ export default function PokemonDetailScreen({ route }: Props) {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  content: {
+    padding: spacing.lg,
+    paddingBottom: spacing.xl,
+  },
+});

@@ -1,11 +1,13 @@
-import React from 'react';
-import { Pressable, View, Text, StyleSheet } from 'react-native';
+import { Animated, Pressable, View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useCallback, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
-  setFavoritePokemon,
-  checkFavouritePokemonExists,
-  askUserToReplaceFavorite,
+  getFavoritePokemon,
+  handleAdd,
+  handleRemove,
 } from '../services/favoriteStorage';
+import { colors, radius, shadow, spacing } from '../styles/globalStyles';
 
 interface PokemonFavouriteButtonComponentProps {
   pokemonId: number;
@@ -16,65 +18,94 @@ const PokemonFavouriteButtonComponent = ({
   pokemonId,
   pokemonName,
 }: PokemonFavouriteButtonComponentProps) => {
+  const [scale] = useState(() => new Animated.Value(1));
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      const checkIsFavorite = async () => {
+        const favorite = await getFavoritePokemon();
+        setIsFavorite(favorite?.id === pokemonId);
+      };
+
+      checkIsFavorite();
+    }, [pokemonId]),
+  );
+
+  const animateTo = (toValue: number) => {
+    Animated.spring(scale, {
+      toValue,
+      speed: 40,
+      bounciness: 6,
+      useNativeDriver: true,
+    }).start();
+  };
+
   const handlePress = async () => {
     try {
-      const favoriteExists = await checkFavouritePokemonExists();
-      if (favoriteExists === true) {
-        const userWantsToReplace = await askUserToReplaceFavorite();
-        if (!userWantsToReplace) return;
+      if (isFavorite) {
+        await handleRemove(setIsFavorite);
+      } else {
+        await handleAdd(pokemonId, pokemonName, setIsFavorite);
       }
-      await setFavoritePokemon({ id: pokemonId, name: pokemonName });
-      console.log('Fav pokemon added to storage');
     } catch (error) {
-      console.error('Failed to save favorite pokemon:', error);
+      console.error('Failed to update favorite pokemon:', error);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Pressable onPress={handlePress} hitSlop={10} style={styles.button}>
-        <View style={styles.iconWrapper}>
-          <Ionicons name="heart" size={48} color="red" />
+    <Pressable
+      onPress={handlePress}
+      onPressIn={() => animateTo(0.96)}
+      onPressOut={() => animateTo(1)}
+      hitSlop={10}>
+      <Animated.View style={[styles.button, { transform: [{ scale }] }]}>
+        <View
+          style={[
+            styles.iconBox,
+            { backgroundColor: isFavorite ? colors.danger : colors.accent },
+          ]}>
           <Ionicons
-            name="heart-outline"
-            size={48}
-            color="black"
-            style={styles.outline}
+            name={isFavorite ? 'heart-dislike' : 'heart'}
+            size={22}
+            color={colors.surface}
           />
         </View>
-        <Text style={styles.text} numberOfLines={1}>
-          Add to fav
+        <Text style={styles.text}>
+          {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
         </Text>
-      </Pressable>
-    </View>
+      </Animated.View>
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    gap: spacing.sm,
+    marginTop: spacing.lg,
+    paddingVertical: spacing.sm,
+    paddingRight: spacing.lg,
+    paddingLeft: spacing.sm,
+    borderRadius: radius.lg,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...shadow('sm'),
+  },
+  iconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 40,
-  },
-  button: {
-    alignItems: 'center',
-  },
-  iconWrapper: {
-    position: 'relative',
-    width: 48,
-    height: 48,
-  },
-  outline: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
   },
   text: {
-    marginTop: 4,
-    fontSize: 20,
-    color: '#000',
-    fontWeight: '600',
-    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: '700',
+    color: colors.textPrimary,
   },
 });
 

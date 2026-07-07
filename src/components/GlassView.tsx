@@ -7,7 +7,7 @@ import {
   ViewStyle,
   Platform,
 } from 'react-native';
-import { BlurView } from 'expo-blur';
+import { BlurView, BlurTargetViewProps } from 'expo-blur';
 import {
   GlassView as NativeGlassView,
   isGlassEffectAPIAvailable,
@@ -18,6 +18,7 @@ interface GlassViewProps extends ViewProps {
   tintColor?: string;
   borderRadius?: number;
   style?: StyleProp<ViewStyle>;
+  blurTarget?: BlurTargetViewProps['ref'];
 }
 
 export function GlassView({
@@ -26,6 +27,7 @@ export function GlassView({
   tintColor,
   borderRadius = 24,
   style,
+  blurTarget,
   ...rest
 }: GlassViewProps) {
   if (isGlassEffectAPIAvailable()) {
@@ -45,9 +47,8 @@ export function GlassView({
       <BlurView
         intensity={intensity}
         tint="light"
-        experimentalBlurMethod={
-          Platform.OS === 'android' ? 'dimezisBlurView' : undefined
-        }
+        blurMethod={Platform.OS === 'android' ? 'dimezisBlurView' : undefined}
+        blurTarget={Platform.OS === 'android' ? blurTarget : undefined}
         style={StyleSheet.absoluteFill}
       />
       <View

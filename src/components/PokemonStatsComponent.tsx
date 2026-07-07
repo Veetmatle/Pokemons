@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { PokemonStat } from '../types/pokemon';
+import { colors, spacing } from '../styles/globalStyles';
 
 interface PokemonStatsComponentProps {
   stats: PokemonStat[];
@@ -9,7 +9,7 @@ interface PokemonStatsComponentProps {
 
 export const PokemonStatsComponent = ({
   stats,
-  accentColor = '#f43f5e',
+  accentColor = colors.accent,
 }: PokemonStatsComponentProps) => {
   const formatStatName = (name: string) => {
     const names: Record<string, string> = {
@@ -24,29 +24,20 @@ export const PokemonStatsComponent = ({
   };
 
   return (
-    <View className="space-y-3.5 mt-2">
+    <View style={styles.container}>
       {stats.map(stat => {
         const percentage = Math.min((stat.value / 150) * 100, 100);
 
         return (
-          <View
-            key={stat.name}
-            className="flex-row items-center justify-between px-6 py-1">
-            <Text className="w-12 text-sm font-bold text-slate-500">
-              {formatStatName(stat.name)}
-            </Text>
-
-            <Text className="w-8 text-sm font-extrabold text-slate-800 text-right mr-3">
-              {stat.value}
-            </Text>
-
-            <View className="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden">
+          <View key={stat.name} style={styles.row}>
+            <Text style={styles.label}>{formatStatName(stat.name)}</Text>
+            <Text style={styles.value}>{stat.value}</Text>
+            <View style={styles.track}>
               <View
-                className="h-full rounded-full"
-                style={{
-                  width: `${percentage}%`,
-                  backgroundColor: accentColor,
-                }}
+                style={[
+                  styles.fill,
+                  { width: `${percentage}%`, backgroundColor: accentColor },
+                ]}
               />
             </View>
           </View>
@@ -55,3 +46,39 @@ export const PokemonStatsComponent = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    gap: spacing.sm,
+    marginTop: spacing.sm,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  label: {
+    width: 48,
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.textMuted,
+  },
+  value: {
+    width: 32,
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    textAlign: 'right',
+    marginRight: spacing.sm,
+  },
+  track: {
+    flex: 1,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.track,
+    overflow: 'hidden',
+  },
+  fill: {
+    height: '100%',
+    borderRadius: 5,
+  },
+});

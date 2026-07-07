@@ -10,7 +10,13 @@ import { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { usePokemonDetail } from '../hooks/usePokemonDetail';
 import PokemonCardComponent from '../components/PokemonCardComponent';
-import PokemonRemoveFavouriteButtonComponent from '../components/PokemonRemoveFavoriteButtonComponent';
+import {
+  colors,
+  globalStyles,
+  spacing,
+  typography,
+} from '../styles/globalStyles';
+import PokemonRemoveFavoriteButtonComponent from '../components/PokemonRemoveFavoriteButtonComponent';
 
 export default function FavoritePokemonScreen() {
   const [favoritePokemon, setFavoritePokemonState] = useState<null | {
@@ -33,9 +39,9 @@ export default function FavoritePokemonScreen() {
           setFavoritePokemonState(favorite);
         } catch (error) {
           console.error('Failed to fetch favorite pokemon:', error);
-        } finally {
-          setIsLoading(false);
         }
+
+        setIsLoading(false);
       };
 
       fetchFavoritePokemon();
@@ -44,61 +50,43 @@ export default function FavoritePokemonScreen() {
 
   if (isLoading && (favoritePokemon !== null || isPokemonLoading)) {
     return (
-      <View style={styles.emptyContainer}>
-        <ActivityIndicator size="large" color="#1f2937" />
+      <View style={[globalStyles.screen, globalStyles.centerContainer]}>
+        <ActivityIndicator size="large" color={colors.accent} />
       </View>
     );
   }
 
   if (favoritePokemon === null) {
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.text}>No favourite pokemons found</Text>
+      <View style={[globalStyles.screen, globalStyles.centerContainer]}>
+        <Text style={typography.body}>No favourite pokemons found</Text>
       </View>
     );
   }
 
   if (isPokemonError || !pokemon) {
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.text}>Could not load Pokemon details</Text>
+      <View style={[globalStyles.screen, globalStyles.centerContainer]}>
+        <Text style={typography.error}>Could not load Pokemon details :/</Text>
       </View>
     );
   }
 
   return (
-    <ScrollView>
-      <View style={{ ...styles.container }}>
-        <PokemonCardComponent pokemon={pokemon} desc={`${pokemon.name}`} />
-      </View>
-      <View style={styles.removeButton}>
-        <PokemonRemoveFavouriteButtonComponent
-          onRemoved={() => setFavoritePokemonState(null)}
-        />
-        <Text style={styles.text}>Remove from fav</Text>
-      </View>
+    <ScrollView
+      style={globalStyles.screen}
+      contentContainerStyle={styles.content}>
+      <PokemonCardComponent pokemon={pokemon} />
+      <PokemonRemoveFavoriteButtonComponent
+        onRemoved={() => setFavoritePokemonState(null)}
+      />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f3f4f6',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1f2937',
-  },
-  removeButton: {
-    marginTop: 40,
-    padding: 10,
-    alignItems: 'center',
+  content: {
+    padding: spacing.lg,
+    paddingBottom: spacing.xl,
   },
 });

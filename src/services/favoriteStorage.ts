@@ -13,7 +13,7 @@ export const getFavoritePokemon = async (): Promise<FavoritePokemon | null> => {
     const jsonValue = await AsyncStorage.getItem(FAVORITE_KEY);
     return jsonValue !== null ? JSON.parse(jsonValue) : null;
   } catch (e) {
-    console.error('Error reading favorite Pokemon from storage', e);
+    console.error('Reading fav poke from storage', e);
     return null;
   }
 };
@@ -32,7 +32,7 @@ export const askUserToReplaceFavorite = (): Promise<boolean> => {
   return new Promise(resolve => {
     Alert.alert(
       'Replace favorite?',
-      'Are you sure you want to replace this Pokemon for favorites?',
+      'You sure want to replace fav poke?',
       [
         { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
         { text: 'Replace', style: 'destructive', onPress: () => resolve(true) },
@@ -47,7 +47,45 @@ export const checkFavouritePokemonExists = async (): Promise<boolean> => {
     const favoritePokemon = await getFavoritePokemon();
     return favoritePokemon !== null;
   } catch (error) {
-    console.error('PokemonService checkFavouritePokemonExists error:', error);
+    console.error('PokemonService error:', error);
     return false;
   }
+};
+
+export const askUserToConfirmFavoriteRemove = (): Promise<boolean> =>
+  new Promise(resolve => {
+    Alert.alert(
+      'Remove favorite?',
+      'Are you sure you want to remove favourite?',
+      [
+        { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
+        {
+          text: 'Remove',
+          style: 'destructive',
+          onPress: () => resolve(true),
+        },
+      ],
+      { onDismiss: () => resolve(false) },
+    );
+  });
+
+export const handleRemove = async (setTheState: (value: boolean) => void) => {
+  const userWantsToRemove = await askUserToConfirmFavoriteRemove();
+  if (!userWantsToRemove) return;
+  await clearFavoritePokemon();
+  setTheState(false);
+};
+
+export const handleAdd = async (
+  pokemonId: number,
+  pokemonName: string,
+  setTheState: (value: boolean) => void,
+) => {
+  const favoriteExists = await checkFavouritePokemonExists();
+  if (favoriteExists) {
+    const userWantsToReplace = await askUserToReplaceFavorite();
+    if (!userWantsToReplace) return;
+  }
+  await setFavoritePokemon({ id: pokemonId, name: pokemonName });
+  setTheState(true);
 };
