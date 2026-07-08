@@ -7,6 +7,7 @@ export const colors = {
   border: 'rgba(120, 53, 15, 0.08)',
   accent: '#B45309',
   accentSoft: 'rgba(180, 83, 9, 0.08)',
+  accentMedium: 'rgba(180, 83, 9, 0.62)',
   textPrimary: '#1E293B',
   textSecondary: '#78350F',
   textMuted: '#94A3B8',
@@ -21,12 +22,14 @@ export const spacing = {
   md: 12,
   lg: 16,
   xl: 24,
+  locationButton: 64,
 };
 
 export const radius = {
   sm: 8,
   md: 14,
   lg: 20,
+  xl: 28,
 };
 
 export const shadow = (level: 'sm' | 'md' | 'lg') => {
