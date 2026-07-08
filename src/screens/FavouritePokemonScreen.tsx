@@ -18,8 +18,10 @@ import {
 } from '../styles/globalStyles';
 import PokemonFavouriteButton from '../components/PokemonFavouriteButton';
 import { NoFavouritePokemon } from '../components/NoFavouritePokemon';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
 export default function FavouritePokemonScreen() {
+  const tabBarHeight = useBottomTabBarHeight();
   const [favouritePokemon, setFavouritePokemonState] = useState<null | {
     id: number;
     name: string;
@@ -72,7 +74,10 @@ export default function FavouritePokemonScreen() {
   return (
     <ScrollView
       style={globalStyles.screen}
-      contentContainerStyle={styles.content}>
+      contentContainerStyle={[
+        styles.content,
+        { paddingBottom: spacing.xl + tabBarHeight },
+      ]}>
       <PokemonCard pokemon={pokemon} />
       <PokemonFavouriteButton
         pokemonId={favouritePokemon.id}

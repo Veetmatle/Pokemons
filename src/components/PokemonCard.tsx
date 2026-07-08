@@ -12,15 +12,12 @@ import {
   typography,
 } from '../styles/globalStyles';
 
-const ImageUrl =
-  'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/';
-
 interface PokemonCardProps {
   pokemon: PokemonDetailData;
 }
 
 export default function PokemonCard({ pokemon }: PokemonCardProps) {
-  const imageUrl = `${ImageUrl}${pokemon.id}.png`;
+  const imageUrl = pokemon.sprites.official ?? pokemon.sprites.frontDefault;
   const accentColor = getTypeAccentColor(pokemon.types);
 
   return (
@@ -32,7 +29,7 @@ export default function PokemonCard({ pokemon }: PokemonCardProps) {
           #{pokemon.id.toString().padStart(3, '0')}
         </Text>
         <Image
-          source={{ uri: imageUrl }}
+          source={imageUrl ? { uri: imageUrl } : undefined}
           style={styles.image}
           transition={400}
         />

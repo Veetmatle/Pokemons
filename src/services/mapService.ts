@@ -1,14 +1,15 @@
 import {
   getForegroundPermissionsAsync,
   requestForegroundPermissionsAsync,
+  PermissionStatus,
 } from 'expo-location';
 
-export const requestLocationPermission = async () => {
-  const { status } = await getForegroundPermissionsAsync();
-  if (status !== 'granted') {
-    const { status: newStatus } = await requestForegroundPermissionsAsync();
-    if (newStatus !== 'granted') {
-      console.warn('Location permission not granted');
-    }
-  }
+export const getLocationPermissionStatus = async () => {
+  return await getForegroundPermissionsAsync();
 };
+
+export const requestLocationPermission = async () => {
+  return await requestForegroundPermissionsAsync();
+};
+
+export { PermissionStatus };

@@ -8,6 +8,17 @@ export interface PokemonStat {
   value: number;
 }
 
+export interface PokemonSprites {
+  official: string | null;
+  frontDefault: string | null;
+  frontShiny: string | null;
+}
+
+export interface PokemonAbility {
+  name: string;
+  isHidden: boolean;
+}
+
 export interface PokemonDetailData {
   id: number;
   name: string;
@@ -15,4 +26,6 @@ export interface PokemonDetailData {
   stats: PokemonStat[];
   height: number;
   weight: number;
+  sprites: PokemonSprites;
+  abilities: PokemonAbility[];
 }
