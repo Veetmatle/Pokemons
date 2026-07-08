@@ -13,14 +13,12 @@ interface PokemonFavouriteButtonProps {
   pokemonId: number;
   pokemonName: string;
   isFavouriteScreen: boolean;
-  onPress?: () => void;
 }
 
 const PokemonFavouriteButton = ({
   pokemonId,
   pokemonName,
   isFavouriteScreen,
-  onPress,
 }: PokemonFavouriteButtonProps) => {
   const scaleValue = useSharedValue(1);
   const { isFavourite, addFavourite, removeFavourite } =
@@ -49,8 +47,6 @@ const PokemonFavouriteButton = ({
     } catch (error) {
       console.error('Failed to update favourite pokemon ', error);
     }
-
-    if (onPress) onPress();
   };
 
   return (
