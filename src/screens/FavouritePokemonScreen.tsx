@@ -5,9 +5,7 @@ import {
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
-import { getFavouritePokemon } from '../services/favouriteStorage';
-import { useState, useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFavouritePokemonValue } from '../hooks/useFavouritePokemonValue';
 import { usePokemonDetail } from '../hooks/usePokemonDetail';
 import PokemonCard from '../components/PokemonCard';
 import {
@@ -22,36 +20,15 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
 export default function FavouritePokemonScreen() {
   const tabBarHeight = useBottomTabBarHeight();
-  const [favouritePokemon, setFavouritePokemonState] = useState<null | {
-    id: number;
-    name: string;
-  }>(null);
+  const { favouritePokemon, isLoading } = useFavouritePokemonValue();
 
-  const [isLoading, setIsLoading] = useState(true);
   const {
     data: pokemon,
     isLoading: isPokemonLoading,
     isError: isPokemonError,
-  } = usePokemonDetail(favouritePokemon?.name || '', favouritePokemon !== null);
+  } = usePokemonDetail(favouritePokemon?.name ?? '', !!favouritePokemon);
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchFavouritePokemon = async () => {
-        try {
-          const favourite = await getFavouritePokemon();
-          setFavouritePokemonState(favourite);
-        } catch (error) {
-          console.error('Failed to fetch favourite pokemon:', error);
-        }
-
-        setIsLoading(false);
-      };
-
-      fetchFavouritePokemon();
-    }, []),
-  );
-
-  if (isLoading && (favouritePokemon !== null || isPokemonLoading)) {
+  if (isLoading) {
     return (
       <View style={[globalStyles.screen, globalStyles.centerContainer]}>
         <ActivityIndicator size="large" color={colors.accent} />
@@ -59,8 +36,16 @@ export default function FavouritePokemonScreen() {
     );
   }
 
-  if (favouritePokemon === null) {
+  if (!favouritePokemon) {
     return <NoFavouritePokemon />;
+  }
+
+  if (isPokemonLoading) {
+    return (
+      <View style={[globalStyles.screen, globalStyles.centerContainer]}>
+        <ActivityIndicator size="large" color={colors.accent} />
+      </View>
+    );
   }
 
   if (isPokemonError || !pokemon) {
@@ -83,7 +68,6 @@ export default function FavouritePokemonScreen() {
         pokemonId={favouritePokemon.id}
         pokemonName={favouritePokemon.name}
         isFavouriteScreen={true}
-        onPress={() => setFavouritePokemonState(null)}
       />
     </ScrollView>
   );

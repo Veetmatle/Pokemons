@@ -1,46 +1,28 @@
-import { useCallback, useState } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import { favouritePokemonStore } from '../services/favouritePokemonStore';
+import { useFavouritePokemonValue } from './useFavouritePokemonValue';
 import {
   askUserToConfirmFavouriteRemove,
   askUserToReplaceFavourite,
-  clearFavouritePokemon,
-  getFavouritePokemon,
-  setFavouritePokemon,
 } from '../services/favouriteStorage';
 
 export const useFavouritePokemon = (pokemonId: number) => {
-  const [isFavourite, setIsFavourite] = useState(false);
-
-  useFocusEffect(
-    useCallback(() => {
-      const checkIsFavourite = async () => {
-        const favourite = await getFavouritePokemon();
-        setIsFavourite(favourite?.id === pokemonId);
-      };
-
-      checkIsFavourite();
-    }, [pokemonId]),
-  );
+  const { favouritePokemon } = useFavouritePokemonValue();
+  const isFavourite = favouritePokemon?.id === pokemonId;
 
   const removeFavourite = async (isMainScreen: boolean) => {
-    let userWantsToRemove = true;
     if (isMainScreen) {
-      userWantsToRemove = await askUserToConfirmFavouriteRemove();
-      if (!userWantsToRemove) return;
+      const confirmed = await askUserToConfirmFavouriteRemove();
+      if (!confirmed) return;
     }
-    if (!userWantsToRemove) return;
-    await clearFavouritePokemon();
-    setIsFavourite(false);
+    await favouritePokemonStore.set(null);
   };
 
   const addFavourite = async (pokemonName: string) => {
-    const favouriteExists = (await getFavouritePokemon()) !== null;
-    if (favouriteExists) {
-      const userWantsToReplace = await askUserToReplaceFavourite();
-      if (!userWantsToReplace) return;
+    if (favouritePokemonStore.getSnapshot() !== null) {
+      const confirmed = await askUserToReplaceFavourite();
+      if (!confirmed) return;
     }
-    await setFavouritePokemon({ id: pokemonId, name: pokemonName });
-    setIsFavourite(true);
+    await favouritePokemonStore.set({ id: pokemonId, name: pokemonName });
   };
 
   return { isFavourite, addFavourite, removeFavourite };
