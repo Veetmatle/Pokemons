@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import MapView, { LongPressEvent } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
@@ -9,6 +9,7 @@ import { useMarkers } from '../hooks/useMarkers';
 import PinMarker from '../components/PinMarker';
 import MarkerBottomSheet from '../components/MarkerBottomSheet';
 import { LocationButton } from '../components/LocationButton';
+import { NoMapAvailable } from '../components/NoMapAvailable';
 import { askUserToTurnOnLocationPermissionSetting } from '../services/mapService';
 
 const KRAKOW_REGION = {
@@ -86,6 +87,10 @@ export default function MapScreen() {
       await askUserToTurnOnLocationPermissionSetting();
     }
   };
+
+  if (Platform.OS === 'android') {
+    return <NoMapAvailable />;
+  }
 
   return (
     <View style={styles.map}>

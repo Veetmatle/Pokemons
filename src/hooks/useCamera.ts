@@ -5,7 +5,7 @@ import { askUserToTurnOnCameraPermissionSetting } from '../services/cameraServic
 export function useCamera() {
   const { hasPermission, canRequestPermission, requestPermission } =
     useCameraPermission();
-  const device = useCameraDevice('back');
+  const device = useCameraDevice('front');
 
   const ensurePermission = useCallback(async () => {
     if (hasPermission) return;
