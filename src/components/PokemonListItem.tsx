@@ -14,8 +14,7 @@ import {
   spacing,
   typography,
 } from '../styles/globalStyles';
-
-const ImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/`;
+import { getPokemonGitHubImageUrlById } from '../services/pokemonService';
 
 interface PokemonListItemProps {
   name: string;
@@ -23,12 +22,8 @@ interface PokemonListItemProps {
   onPress: (pokemonName: string, pokemonId: number) => void;
 }
 
-const PokemonListItem = ({
-  name,
-  id,
-  onPress,
-}: PokemonListItemProps) => {
-  const imageUrl = `${ImageUrl}${id}.png`;
+const PokemonListItem = ({ name, id, onPress }: PokemonListItemProps) => {
+  const imageUrl = getPokemonGitHubImageUrlById(id);
   const scaleValue = useSharedValue(1);
 
   const animateTo = (toValue: number) => {
