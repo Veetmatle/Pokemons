@@ -3,7 +3,7 @@ import { useFavouritePokemonValue } from './useFavouritePokemonValue';
 import {
   askUserToConfirmFavouriteRemove,
   askUserToReplaceFavourite,
-} from '../services/favouriteAlerts';
+} from '../services/favouriteAlertsService';
 
 export const useFavouritePokemon = (pokemonId: number) => {
   const { favouritePokemon } = useFavouritePokemonValue();
