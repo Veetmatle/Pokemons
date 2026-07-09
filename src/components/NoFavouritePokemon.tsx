@@ -19,6 +19,7 @@ export function NoFavouritePokemon() {
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability
     opacity.value = withRepeat(withTiming(0, { duration: duration }), -1, true);
   }, [opacity]);
 

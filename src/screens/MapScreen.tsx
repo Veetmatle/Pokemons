@@ -1,11 +1,13 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { StyleSheet, View } from 'react-native';
 import MapView, { LongPressEvent } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
+import BottomSheet from '@gorhom/bottom-sheet';
 import { useUserLocation } from '../hooks/useLocation';
 import { useMarkers } from '../hooks/useMarkers';
 import PinMarker from '../components/PinMarker';
+import MarkerBottomSheet from '../components/MarkerBottomSheet';
 import { LocationButton } from '../components/LocationButton';
 import { askUserToTurnOnLocationPermissionSetting } from '../services/mapService';
 
@@ -26,9 +28,13 @@ export default function MapScreen() {
     refreshLocation,
     isCheckingPermission,
   } = useUserLocation();
-  const { markers, addMarker } = useMarkers();
+  const { markers, addMarker, removeMarker } = useMarkers();
   const mapRef = useRef<MapView>(null);
+  const bottomSheetRef = useRef<BottomSheet>(null);
   const [mapReady, setMapReady] = useState(false);
+  const [selectedMarkerId, setSelectedMarkerId] = useState<string | null>(null);
+  const selectedPokemonId =
+    markers.find(marker => marker.id === selectedMarkerId)?.pokemonId ?? null;
 
   useEffect(() => {
     if (
@@ -49,18 +55,26 @@ export default function MapScreen() {
     }
   }, [location, mapReady, permission]);
 
-  // Dla testu
   const handleMapLongPress = (event: LongPressEvent) => {
     const { latitude, longitude } = event.nativeEvent.coordinate;
 
     addMarker({
       latitude,
       longitude,
-      pokemonId: 25,
-      pokemonName: 'pikachu',
-      pokemonImage:
-        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png',
+      pokemonId: Math.floor(Math.random() * 10) + 1,
     });
+  };
+
+  const handleMarkerPress = useCallback((markerId: string) => {
+    setSelectedMarkerId(markerId);
+    bottomSheetRef.current?.snapToIndex(0);
+  }, []);
+
+  const handleDeleteSelectedMarker = () => {
+    if (selectedMarkerId) {
+      removeMarker(selectedMarkerId);
+    }
+    bottomSheetRef.current?.close();
   };
 
   const handleLocationButtonPress = async (): Promise<void> => {
@@ -91,13 +105,19 @@ export default function MapScreen() {
           <PinMarker
             key={marker.id}
             marker={marker}
-            onPress={() => console.log(`Marker pressed: ${marker.pokemonName}`)}
+            onPress={handleMarkerPress}
           />
         ))}
       </MapView>
       <LocationButton
         onPress={handleLocationButtonPress}
         disabled={isCheckingPermission}
+      />
+      <MarkerBottomSheet
+        ref={bottomSheetRef}
+        pokemonId={selectedPokemonId}
+        onDelete={handleDeleteSelectedMarker}
+        onClose={() => setSelectedMarkerId(null)}
       />
     </View>
   );

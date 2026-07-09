@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
-import { loadMarkers, saveMarkers } from '../services/markerStorage';
+import {
+  enforceMarkerLimit,
+  loadMarkers,
+  saveMarkers,
+} from '../services/markerStorage';
 import { PokemonMarker } from '../types/marker';
 
 export function useMarkers() {
@@ -24,14 +28,18 @@ export function useMarkers() {
     saveMarkers(markers);
   }, [markers, loaded]);
 
-  function addMarker(marker: Omit<PokemonMarker, 'id' | 'createdAt'>) {
+  function addMarker(marker: {
+    latitude: number;
+    longitude: number;
+    pokemonId: number;
+  }) {
     const newMarker: PokemonMarker = {
       id: Date.now().toString(),
       createdAt: Date.now(),
       ...marker,
     };
 
-    setMarkers(prev => [...prev, newMarker]);
+    setMarkers(prev => enforceMarkerLimit([...prev, newMarker]));
   }
 
   function removeMarker(id: string) {

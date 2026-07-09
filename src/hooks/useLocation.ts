@@ -52,7 +52,7 @@ export function useUserLocation() {
     [fetchCurrentPosition],
   );
 
-  // Initial location fetch and perms check
+  // init call for location perm and location fetch
   const initLocation = useCallback(async () => {
     try {
       await withPermissionLock(async () => {
