@@ -17,7 +17,7 @@ export type PokemonDetailScreenProps = StackScreenProps<
 
 export type AppTabParamList = {
   PokemonTab: undefined;
-  Favorite: undefined;
+  Favourite: undefined;
   Map: undefined;
   Camera: undefined;
 };

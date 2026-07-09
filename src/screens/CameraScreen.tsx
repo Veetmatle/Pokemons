@@ -1,29 +1,40 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useColorScheme } from 'nativewind';
+import { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Camera } from 'react-native-vision-camera';
+import { useCamera } from '../hooks/useCamera';
+import { NoCameraPermission } from '../components/NoCameraPermission';
+import { globalStyles } from '../styles/globalStyles';
 
 export default function CameraScreen() {
-  const { toggleColorScheme } = useColorScheme();
+  const { hasPermission, canRequestPermission, requestPermission, device } =
+    useCamera();
+
+  useEffect(() => {
+    requestPermission();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (!hasPermission && !canRequestPermission) {
+    return <NoCameraPermission />;
+  }
+
+  if (!hasPermission) {
+    return <View style={globalStyles.screen} />;
+  }
+
+  if (!device) {
+    return <View style={globalStyles.screen} />;
+  }
 
   return (
-    <>
-      <View className="flex-1 items-center justify-center bg-white dark:bg-black">
-        <Text style={styles.text}>Camera screen</Text>
-        <Text style={styles.text}>Work in progress :DD</Text>
-      </View>
-      <View className="flex-1 items-center bg-white dark:bg-black">
-        <Text>Motive color button change</Text>
-        <TouchableOpacity onPress={toggleColorScheme}>
-          <Text style={styles.text}>Change color</Text>
-        </TouchableOpacity>
-      </View>
-    </>
+    <View style={styles.container}>
+      <Camera style={StyleSheet.absoluteFill} device={device} isActive />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  text: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#e63b0c',
+  container: {
+    flex: 1,
   },
 });

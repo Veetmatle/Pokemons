@@ -34,4 +34,13 @@ export const mapPokeAPIDetailToPokemonDetailData = (
   })),
   height: data.height,
   weight: data.weight,
+  sprites: {
+    official: data.sprites.other?.['official-artwork']?.front_default ?? null,
+    frontDefault: data.sprites.front_default,
+    frontShiny: data.sprites.front_shiny,
+  },
+  abilities: data.abilities.map(a => ({
+    name: a.ability.name,
+    isHidden: a.is_hidden,
+  })),
 });

@@ -1,30 +1,32 @@
 import {
+  StyleSheet,
+  Text,
   View,
   ActivityIndicator,
-  Text,
   ScrollView,
-  StyleSheet,
 } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { PokemonStackParamList } from '../navigation/types';
+import { useFavouritePokemonValue } from '../hooks/useFavouritePokemonValue';
 import { usePokemonDetail } from '../hooks/usePokemonDetail';
 import PokemonCard from '../components/PokemonCard';
-import { PokemonAbilities } from '../components/PokemonAbilities';
-import PokemonFavouriteButton from '../components/PokemonFavouriteButton';
 import {
   colors,
   globalStyles,
   spacing,
   typography,
 } from '../styles/globalStyles';
+import PokemonFavouriteButton from '../components/PokemonFavouriteButton';
+import { NoFavouritePokemon } from '../components/NoFavouritePokemon';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
-type Props = NativeStackScreenProps<PokemonStackParamList, 'PokemonDetail'>;
-
-export default function PokemonDetailScreen({ route }: Props) {
+export default function FavouritePokemonScreen() {
   const tabBarHeight = useBottomTabBarHeight();
-  const { pokemonName } = route.params;
-  const { data: pokemon, isLoading, isError } = usePokemonDetail(pokemonName);
+  const { favouritePokemon, isLoading } = useFavouritePokemonValue();
+
+  const {
+    data: pokemon,
+    isLoading: isPokemonLoading,
+    isError: isPokemonError,
+  } = usePokemonDetail(favouritePokemon?.name ?? '', !!favouritePokemon);
 
   if (isLoading) {
     return (
@@ -34,7 +36,19 @@ export default function PokemonDetailScreen({ route }: Props) {
     );
   }
 
-  if (isError || !pokemon) {
+  if (!favouritePokemon) {
+    return <NoFavouritePokemon />;
+  }
+
+  if (isPokemonLoading) {
+    return (
+      <View style={[globalStyles.screen, globalStyles.centerContainer]}>
+        <ActivityIndicator size="large" color={colors.accent} />
+      </View>
+    );
+  }
+
+  if (isPokemonError || !pokemon) {
     return (
       <View style={[globalStyles.screen, globalStyles.centerContainer]}>
         <Text style={typography.error}>Could not load Pokemon details :/</Text>
@@ -50,11 +64,10 @@ export default function PokemonDetailScreen({ route }: Props) {
         { paddingBottom: spacing.xl + tabBarHeight },
       ]}>
       <PokemonCard pokemon={pokemon} />
-      <PokemonAbilities abilities={pokemon.abilities} />
       <PokemonFavouriteButton
-        pokemonId={pokemon.id}
-        pokemonName={pokemon.name}
-        isFavouriteScreen={false}
+        pokemonId={favouritePokemon.id}
+        pokemonName={favouritePokemon.name}
+        isFavouriteScreen={true}
       />
     </ScrollView>
   );
@@ -64,5 +77,12 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.lg,
     paddingBottom: spacing.xl,
+  },
+  noFavPokemonContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginLeft: spacing.md,
+    marginRight: spacing.md,
   },
 });

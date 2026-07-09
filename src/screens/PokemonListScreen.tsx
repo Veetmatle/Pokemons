@@ -1,10 +1,11 @@
-import { View, ActivityIndicator, Text } from 'react-native';
-import PokemonListItemComponent from '../components/PokemonListItemComponent';
+import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
+import PokemonListItem from '../components/PokemonListItem';
 import { PokemonListScreenProps } from '../navigation/types';
 import { usePokemonInfinite } from '../hooks/usePokemonInfinite';
 import { LegendList } from '@legendapp/list/react-native';
 import { useCallback } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { colors, globalStyles, spacing, typography } from '../styles/globalStyles';
 
 export default function PokemonListScreen({
   navigation,
@@ -30,25 +31,25 @@ export default function PokemonListScreen({
 
   if (isLoading) {
     return (
-      <View className={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+      <View style={[globalStyles.screen, globalStyles.centerContainer]}>
+        <ActivityIndicator size="large" color={colors.accent} />
       </View>
     );
   }
 
   return (
-    <View className={styles.container} style={{ paddingTop: insets.top }}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <LegendList
         recycleItems={true}
         data={pokemons}
         ListEmptyComponent={
-          <View className={styles.centerContainer}>
-            <Text className={styles.errorText}>No pokemons found</Text>
+          <View style={globalStyles.centerContainer}>
+            <Text style={typography.error}>No pokemons found</Text>
           </View>
         }
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
-          <PokemonListItemComponent
+          <PokemonListItem
             name={item.name}
             id={item.id}
             onPress={handleItemPress}
@@ -64,9 +65,9 @@ export default function PokemonListScreen({
         ListFooterComponent={() =>
           isFetchingNextPage ? (
             <ActivityIndicator
-              style={{ marginVertical: 15 }}
+              style={styles.footerLoader}
               size="small"
-              color="#0000ff"
+              color={colors.accent}
             />
           ) : null
         }
@@ -77,9 +78,12 @@ export default function PokemonListScreen({
   );
 }
 
-const styles = {
-  centerContainer:
-    'flex-1 justify-center items-center bg-white dark:bg-[#0F1117]',
-  errorText: 'font-bold text-base text-red-800 dark:text-red-400',
-  container: 'flex-1 bg-amber-85 dark:bg-[#0F1117] pt-2.5',
-};
+const styles = StyleSheet.create({
+  container: {
+    ...globalStyles.screen,
+    paddingTop: spacing.sm,
+  },
+  footerLoader: {
+    marginVertical: spacing.lg,
+  },
+});

@@ -54,3 +54,7 @@ export const fetchPokemonDetail = async (
     throw error;
   }
 };
+
+export const getPokemonGitHubImageUrlById = (id: number): string => {
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+};

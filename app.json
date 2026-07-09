@@ -5,10 +5,13 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.andrzejlaskowski.pokemonlask"
+      "bundleIdentifier": "com.andrzejlaskowski.pokemonlask",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to let you take photos of Pokemon."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -18,11 +21,16 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.andrzejlaskowski.pokemonlask"
+      "package": "com.andrzejlaskowski.pokemonlask",
+      "permissions": ["android.permission.CAMERA"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-image"]
+    "plugins": [
+      "expo-image",
+      "react-native-permissions",
+      "expo-location"
+    ]
   }
 }
