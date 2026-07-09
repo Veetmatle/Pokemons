@@ -78,8 +78,10 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl,
   },
   idBadge: {
-    alignSelf: 'flex-end',
-    marginRight: spacing.lg,
+    position: 'absolute',
+    top: spacing.md,
+    left: spacing.lg,
+    zIndex: 1,
     color: 'rgba(255,255,255,0.85)',
     fontWeight: '700',
   },
