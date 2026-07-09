@@ -4,6 +4,7 @@ import {
   setFavouritePokemon,
 } from './favouriteStorage';
 
+// zusta
 export type FavouritePokemon = { id: number; name: string } | null;
 type Listener = () => void;
 

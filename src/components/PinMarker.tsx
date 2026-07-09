@@ -32,10 +32,7 @@ function PinMarker({ marker, onPress }: Props) {
 
   return (
     <Marker
-      coordinate={{
-        latitude: marker.latitude,
-        longitude: marker.longitude,
-      }}
+      coordinate={marker}
       tracksViewChanges={tracksViewChanges}
       onPress={() => onPress(marker.id)}>
       <Pressable

@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import MapView, { LongPressEvent } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
-import BottomSheet from '@gorhom/bottom-sheet';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useUserLocation } from '../hooks/useLocation';
 import { useMarkers } from '../hooks/useMarkers';
 import PinMarker from '../components/PinMarker';
@@ -30,7 +30,7 @@ export default function MapScreen() {
   } = useUserLocation();
   const { markers, addMarker, removeMarker } = useMarkers();
   const mapRef = useRef<MapView>(null);
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
   const [mapReady, setMapReady] = useState(false);
   const [selectedMarkerId, setSelectedMarkerId] = useState<string | null>(null);
   const selectedPokemonId =
@@ -67,14 +67,14 @@ export default function MapScreen() {
 
   const handleMarkerPress = useCallback((markerId: string) => {
     setSelectedMarkerId(markerId);
-    bottomSheetRef.current?.snapToIndex(0);
+    bottomSheetRef.current?.present();
   }, []);
 
   const handleDeleteSelectedMarker = () => {
     if (selectedMarkerId) {
       removeMarker(selectedMarkerId);
     }
-    bottomSheetRef.current?.close();
+    bottomSheetRef.current?.dismiss();
   };
 
   const handleLocationButtonPress = async (): Promise<void> => {

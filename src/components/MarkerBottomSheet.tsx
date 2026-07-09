@@ -1,82 +1,111 @@
+import { useCallback, type Ref } from 'react';
 import {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-} from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
-import BottomSheet, {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+} from 'react-native';
+import {
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
+  BottomSheetModal,
   BottomSheetScrollView,
   useBottomSheetSpringConfigs,
 } from '@gorhom/bottom-sheet';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { usePokemonDetail } from '../hooks/usePokemonDetail';
-import { colors, radius, spacing, typography } from '../styles/globalStyles';
+import {
+  colors,
+  radius,
+  shadow,
+  spacing,
+  typography,
+} from '../styles/globalStyles';
+import PokemonCard from './PokemonCard';
 
 interface Props {
+  ref?: Ref<BottomSheetModal>;
   pokemonId: number | null;
   onDelete: () => void;
   onClose: () => void;
 }
 
-const MarkerBottomSheet = forwardRef<BottomSheet, Props>(
-  ({ pokemonId, onDelete, onClose }, ref) => {
-    const snapPoints = useMemo(() => ['50%'], []);
-    const animationConfigs = useBottomSheetSpringConfigs({
-      damping: 40,
-      stiffness: 350,
-      mass: 0.6,
-    });
-    const { data } = usePokemonDetail(String(pokemonId), pokemonId !== null);
-    const sheetRef = useRef<BottomSheet>(null);
-    useImperativeHandle(ref, () => sheetRef.current as BottomSheet);
+export default function MarkerBottomSheet({
+  ref,
+  pokemonId,
+  onDelete,
+  onClose,
+}: Props) {
+  const tabBarHeight = useBottomTabBarHeight();
+  const { height: windowHeight } = useWindowDimensions();
+  const animationConfigs = useBottomSheetSpringConfigs({
+    damping: 40,
+    stiffness: 350,
+    mass: 0.6,
+  });
+  const {
+    data: pokemon,
+    isLoading,
+    isError,
+  } = usePokemonDetail(String(pokemonId), pokemonId !== null);
 
-    const renderBackdrop = useCallback(
-      (props: BottomSheetBackdropProps) => (
-        <BottomSheetBackdrop
-          {...props}
-          appearsOnIndex={0}
-          disappearsOnIndex={-1}
-          pressBehavior="close"
-        />
-      ),
-      [],
-    );
+  const renderBackdrop = useCallback(
+    (props: BottomSheetBackdropProps) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        pressBehavior="close"
+      />
+    ),
+    [],
+  );
 
-    return (
-      <BottomSheet
-        ref={sheetRef}
-        index={-1}
-        snapPoints={snapPoints}
-        enableDynamicSizing={false}
-        enablePanDownToClose
-        animationConfigs={animationConfigs}
-        onClose={onClose}
-        backdropComponent={renderBackdrop}
-        backgroundStyle={styles.background}
-        handleIndicatorStyle={styles.handleIndicator}>
-        <Pressable
-          style={styles.closeButton}
-          onPress={() => sheetRef.current?.close()}
-          hitSlop={12}>
-          <Text style={styles.closeButtonText}>✕</Text>
-        </Pressable>
-        <BottomSheetScrollView contentContainerStyle={styles.content}>
-          <Text style={typography.title}>{data?.name ?? '...'}</Text>
-          <Pressable style={styles.deleteButton} onPress={onDelete}>
-            <Text style={styles.deleteButtonText}>Remove marker</Text>
-          </Pressable>
-        </BottomSheetScrollView>
-      </BottomSheet>
-    );
-  },
-);
-
-MarkerBottomSheet.displayName = 'MarkerBottomSheet';
-
-export default MarkerBottomSheet;
+  return (
+    <BottomSheetModal
+      ref={ref}
+      enableDynamicSizing
+      maxDynamicContentSize={windowHeight * 0.9}
+      enablePanDownToClose
+      animationConfigs={animationConfigs}
+      onDismiss={onClose}
+      backdropComponent={renderBackdrop}
+      backgroundStyle={styles.background}
+      handleIndicatorStyle={styles.handleIndicator}>
+      <Pressable
+        style={styles.closeButton}
+        onPress={() => {
+          if (ref && 'current' in ref) {
+            ref.current?.dismiss();
+          }
+        }}
+        hitSlop={12}>
+        <Text style={styles.closeButtonText}>✕</Text>
+      </Pressable>
+      <BottomSheetScrollView
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: spacing.xl + tabBarHeight },
+        ]}>
+        {isLoading ? (
+          <ActivityIndicator color={colors.accent} />
+        ) : isError || !pokemon ? (
+          <Text style={typography.error}>
+            Could not load Pokemon details :/
+          </Text>
+        ) : (
+          <>
+            <PokemonCard pokemon={pokemon} />
+            <Pressable style={styles.deleteButton} onPress={onDelete}>
+              <Text style={styles.deleteButtonText}>Remove marker</Text>
+            </Pressable>
+          </>
+        )}
+      </BottomSheetScrollView>
+    </BottomSheetModal>
+  );
+}
 
 const styles = StyleSheet.create({
   background: {
@@ -87,18 +116,25 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: spacing.lg,
-    paddingTop: spacing.xl,
+    paddingTop: spacing.xl * 2,
     gap: spacing.lg,
   },
   closeButton: {
     position: 'absolute',
-    top: spacing.sm,
-    right: spacing.sm,
+    top: spacing.xss,
+    right: spacing.lg,
     zIndex: 1,
-    padding: spacing.xs,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadow('sm'),
   },
   closeButtonText: {
     fontSize: 18,
+    fontWeight: '700',
     color: colors.textMuted,
   },
   deleteButton: {
