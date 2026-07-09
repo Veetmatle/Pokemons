@@ -3,5 +3,4 @@ export interface PokemonMarker {
   latitude: number;
   longitude: number;
   pokemonId: number;
-  createdAt: number;
 }

@@ -1,36 +1,29 @@
-import {
-  clearFavouritePokemon,
-  getFavouritePokemon,
-  setFavouritePokemon,
-} from './favouriteStorage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
-// zusta
 export type FavouritePokemon = { id: number; name: string } | null;
-type Listener = () => void;
 
-let current: FavouritePokemon = null;
-let ready = false;
-const listeners = new Set<Listener>();
-const notify = () => listeners.forEach(l => l());
+interface FavouritePokemonState {
+  favouritePokemon: FavouritePokemon;
+  hasHydrated: boolean;
+  setFavouritePokemon: (favourite: FavouritePokemon) => void;
+}
 
-getFavouritePokemon().then(favourite => {
-  current = favourite;
-  ready = true;
-  notify();
-});
-
-export const favouritePokemonStore = {
-  subscribe(listener: Listener) {
-    listeners.add(listener);
-    return () => listeners.delete(listener);
-  },
-  getSnapshot: () => current,
-  isReady: () => ready,
-  async set(favourite: FavouritePokemon) {
-    if (favourite) await setFavouritePokemon(favourite);
-    else await clearFavouritePokemon();
-    current = favourite;
-    ready = true;
-    notify();
-  },
-};
+export const useFavouritePokemonStore = create<FavouritePokemonState>()(
+  persist(
+    set => ({
+      favouritePokemon: null,
+      hasHydrated: false,
+      setFavouritePokemon: favourite => set({ favouritePokemon: favourite }),
+    }),
+    {
+      name: 'favouritePokemon',
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: state => ({ favouritePokemon: state.favouritePokemon }),
+      onRehydrateStorage: () => () => {
+        useFavouritePokemonStore.setState({ hasHydrated: true });
+      },
+    },
+  ),
+);

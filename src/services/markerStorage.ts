@@ -35,6 +35,6 @@ export function enforceMarkerLimit(
   }
 
   return [...markers]
-    .sort((a, b) => b.createdAt - a.createdAt)
+    .sort((a, b) => Number(b.id) - Number(a.id))
     .slice(0, MAX_MARKERS);
 }

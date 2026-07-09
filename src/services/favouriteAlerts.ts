@@ -1,32 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
-
-const FAVOURITE_KEY = 'favouritePokemon';
-
-export interface FavouritePokemon {
-  id: number;
-  name: string;
-}
-
-export const getFavouritePokemon = async (): Promise<FavouritePokemon | null> => {
-  try {
-    const jsonValue = await AsyncStorage.getItem(FAVOURITE_KEY);
-    return jsonValue !== null ? JSON.parse(jsonValue) : null;
-  } catch (e) {
-    console.error('Reading fav poke from storage', e);
-    return null;
-  }
-};
-
-export const setFavouritePokemon = async (
-  pokemon: FavouritePokemon,
-): Promise<void> => {
-  await AsyncStorage.setItem(FAVOURITE_KEY, JSON.stringify(pokemon));
-};
-
-export const clearFavouritePokemon = async (): Promise<void> => {
-  await AsyncStorage.removeItem(FAVOURITE_KEY);
-};
 
 export const askUserToReplaceFavourite = (): Promise<boolean> => {
   return new Promise(resolve => {

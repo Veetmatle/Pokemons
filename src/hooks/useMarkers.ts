@@ -35,7 +35,6 @@ export function useMarkers() {
   }) {
     const newMarker: PokemonMarker = {
       id: Date.now().toString(),
-      createdAt: Date.now(),
       ...marker,
     };
 

@@ -1,9 +1,9 @@
-import { favouritePokemonStore } from '../services/favouritePokemonStore';
+import { useFavouritePokemonStore } from '../services/favouritePokemonStore';
 import { useFavouritePokemonValue } from './useFavouritePokemonValue';
 import {
   askUserToConfirmFavouriteRemove,
   askUserToReplaceFavourite,
-} from '../services/favouriteStorage';
+} from '../services/favouriteAlerts';
 
 export const useFavouritePokemon = (pokemonId: number) => {
   const { favouritePokemon } = useFavouritePokemonValue();
@@ -14,15 +14,17 @@ export const useFavouritePokemon = (pokemonId: number) => {
       const confirmed = await askUserToConfirmFavouriteRemove();
       if (!confirmed) return;
     }
-    await favouritePokemonStore.set(null);
+    useFavouritePokemonStore.getState().setFavouritePokemon(null);
   };
 
   const addFavourite = async (pokemonName: string) => {
-    if (favouritePokemonStore.getSnapshot() !== null) {
+    if (useFavouritePokemonStore.getState().favouritePokemon !== null) {
       const confirmed = await askUserToReplaceFavourite();
       if (!confirmed) return;
     }
-    await favouritePokemonStore.set({ id: pokemonId, name: pokemonName });
+    useFavouritePokemonStore
+      .getState()
+      .setFavouritePokemon({ id: pokemonId, name: pokemonName });
   };
 
   return { isFavourite, addFavourite, removeFavourite };

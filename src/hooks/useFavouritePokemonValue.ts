@@ -1,10 +1,9 @@
-import { useSyncExternalStore } from 'react';
-import { favouritePokemonStore } from '../services/favouritePokemonStore';
+import { useFavouritePokemonStore } from '../services/favouritePokemonStore';
 
 export function useFavouritePokemonValue() {
-  const favouritePokemon = useSyncExternalStore(
-    favouritePokemonStore.subscribe,
-    favouritePokemonStore.getSnapshot,
+  const favouritePokemon = useFavouritePokemonStore(
+    state => state.favouritePokemon,
   );
-  return { favouritePokemon, isLoading: !favouritePokemonStore.isReady() };
+  const hasHydrated = useFavouritePokemonStore(state => state.hasHydrated);
+  return { favouritePokemon, isLoading: !hasHydrated };
 }
