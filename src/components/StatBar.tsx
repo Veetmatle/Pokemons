@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -31,9 +32,12 @@ export const StatBar = ({
 }: StatBarProps) => {
   const progress = useSharedValue(0);
 
-  useEffect(() => {
-    progress.value = withTiming(1, { duration: 700 });
-  }, [progress]);
+  useFocusEffect(
+    useCallback(() => {
+      progress.value = 0;
+      progress.value = withTiming(1, { duration: 700 });
+    }, [progress]),
+  );
 
   const animatedStyle = useAnimatedStyle(() => ({
     width: `${progress.value * percentage}%`,

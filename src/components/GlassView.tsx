@@ -42,19 +42,25 @@ export function GlassView({
     );
   }
 
+  const isAndroid = Platform.OS === 'android';
+
   return (
     <View style={[{ borderRadius, overflow: 'hidden' }, style]} {...rest}>
       <BlurView
-        intensity={intensity}
+        intensity={isAndroid ? Math.max(intensity, 80) : intensity}
         tint="light"
-        blurMethod={Platform.OS === 'android' ? 'dimezisBlurView' : undefined}
-        blurTarget={Platform.OS === 'android' ? blurTarget : undefined}
+        blurMethod={isAndroid ? 'dimezisBlurView' : undefined}
+        blurTarget={isAndroid ? blurTarget : undefined}
         style={StyleSheet.absoluteFill}
       />
       <View
         style={[
           StyleSheet.absoluteFill,
-          { backgroundColor: tintColor ?? 'rgba(255,255,255,0.18)' },
+          {
+            backgroundColor:
+              tintColor ??
+              (isAndroid ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.18)'),
+          },
         ]}
       />
       {children}

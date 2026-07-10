@@ -58,3 +58,7 @@ export const fetchPokemonDetail = async (
 export const getPokemonGitHubImageUrlById = (id: number): string => {
   return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 };
+
+export const getPokemonOfficialArtworkUrlById = (id: number): string => {
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+};
