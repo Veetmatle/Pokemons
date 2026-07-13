@@ -16,7 +16,6 @@ export interface PokemonSprites {
 
 export interface PokemonAbility {
   name: string;
-  isHidden: boolean;
 }
 
 export interface PokemonDetailData {

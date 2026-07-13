@@ -78,11 +78,4 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     paddingBottom: spacing.xl,
   },
-  noFavPokemonContainer: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: spacing.sm,
-    marginLeft: spacing.md,
-    marginRight: spacing.md,
-  },
 });

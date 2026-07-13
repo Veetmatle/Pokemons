@@ -35,10 +35,15 @@ function FaceCameraViewComponent({
     React.ComponentProps<typeof Camera>['onFacesDetected']
   >(
     faces => {
-      const b = faces[0]?.bounds;
+      const bounds = faces[0]?.bounds;
       // eslint-disable-next-line react-hooks/immutability
-      faceBounds.value = b
-        ? { x: b.x, y: b.y, width: b.width, height: b.height }
+      faceBounds.value = bounds
+        ? {
+            x: bounds.x,
+            y: bounds.y,
+            width: bounds.width,
+            height: bounds.height,
+          }
         : null;
     },
     [faceBounds],
@@ -61,15 +66,15 @@ function FaceCameraViewComponent({
   }, []);
 
   const hatStyle = useAnimatedStyle(() => {
-    const b = faceBounds.value;
-    if (!b || !isPreviewReady.value) {
+    const boundValue = faceBounds.value;
+    if (!boundValue || !isPreviewReady.value) {
       return { opacity: 0 };
     }
-    const size = b.width;
+    const size = boundValue.width;
     return {
       opacity: 1,
-      left: b.x,
-      top: b.y - size,
+      left: boundValue.x,
+      top: boundValue.y - size,
       width: size,
       height: size,
     };

@@ -26,8 +26,8 @@ const PokemonFavouriteButton = ({
 
   const animateTo = (toValue: number) => {
     scaleValue.value = withSpring(toValue, {
-      stiffness: 200, // szybkość animacji
-      damping: 15, // bounciness
+      stiffness: 200,
+      damping: 15,
     });
   };
 

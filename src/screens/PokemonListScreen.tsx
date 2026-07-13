@@ -13,6 +13,7 @@ export default function PokemonListScreen({
   const {
     pokemons,
     isLoading,
+    isError,
     hasNextPage,
     isFetchingNextPage,
     isRefetching,
@@ -33,6 +34,14 @@ export default function PokemonListScreen({
     return (
       <View style={[globalStyles.screen, globalStyles.centerContainer]}>
         <ActivityIndicator size="large" color={colors.accent} />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={[globalStyles.screen, globalStyles.centerContainer]}>
+        <Text style={typography.error}>Could not load Pokemon list :/</Text>
       </View>
     );
   }

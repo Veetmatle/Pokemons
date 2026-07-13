@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as Location from 'expo-location';
-import { AppState, AppStateStatus } from 'react-native';
+import { AppState, AppStateStatus, Platform } from 'react-native';
 
 type UserLocation = {
   latitude: number;
@@ -17,12 +17,26 @@ export function useUserLocation() {
   const isRequestingPermission = useRef(false);
 
   const fetchCurrentPosition = useCallback(async () => {
-    const current = await Location.getCurrentPositionAsync({});
+    try {
+      const current = await Location.getCurrentPositionAsync({});
 
-    setLocation({
-      latitude: current.coords.latitude,
-      longitude: current.coords.longitude,
-    });
+      setLocation({
+        latitude: current.coords.latitude,
+        longitude: current.coords.longitude,
+      });
+    } catch (error) {
+      if (Platform.OS !== 'android') {
+        throw error;
+      }
+
+      await Location.enableNetworkProviderAsync();
+      const current = await Location.getCurrentPositionAsync({});
+
+      setLocation({
+        latitude: current.coords.latitude,
+        longitude: current.coords.longitude,
+      });
+    }
   }, []);
 
   const withPermissionLock = useCallback(

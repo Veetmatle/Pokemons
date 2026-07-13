@@ -28,12 +28,11 @@ const PokemonListItem = ({ name, id, onPress }: PokemonListItemProps) => {
 
   const animateTo = (toValue: number) => {
     scaleValue.value = withSpring(toValue, {
-      stiffness: 300, // szybkość animacji
-      damping: 15, // bounciness
+      stiffness: 300,
+      damping: 15,
     });
   };
 
-  // z useAnimatedStyle bezposrednia animacja animated view do docelowej value
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{ scale: scaleValue.value }],

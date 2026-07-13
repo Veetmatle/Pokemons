@@ -10,10 +10,14 @@ export function useCamera() {
   const ensurePermission = useCallback(async () => {
     if (hasPermission) return;
 
-    if (canRequestPermission) {
-      await requestPermission();
-    } else {
-      await askUserToTurnOnCameraPermissionSetting();
+    try {
+      if (canRequestPermission) {
+        await requestPermission();
+      } else {
+        await askUserToTurnOnCameraPermissionSetting();
+      }
+    } catch (error) {
+      console.error('Camera permission error:', error);
     }
   }, [hasPermission, canRequestPermission, requestPermission]);
 

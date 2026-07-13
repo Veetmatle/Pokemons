@@ -8,7 +8,6 @@ import { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { globalStyles, spacing, typography } from '../styles/globalStyles';
 
-// Problem przy dev mode: przy zapisie zmian dotyczacych animacji tekst robi się mniej widoczny
 export function NoFavouritePokemon() {
   const opacity = useSharedValue<number>(1);
   const duration = 1500;
@@ -42,10 +41,6 @@ export function NoFavouritePokemon() {
 }
 
 const styles = StyleSheet.create({
-  content: {
-    padding: spacing.lg,
-    paddingBottom: spacing.xl,
-  },
   noFavPokemonContainer: {
     flexDirection: 'column',
     alignItems: 'center',

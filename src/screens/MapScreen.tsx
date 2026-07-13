@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
-import MapView, { LongPressEvent } from 'react-native-maps';
+import MapView, { LongPressEvent, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -9,7 +9,6 @@ import { useMarkers } from '../hooks/useMarkers';
 import PinMarker from '../components/PinMarker';
 import MarkerBottomSheet from '../components/MarkerBottomSheet';
 import { LocationButton } from '../components/LocationButton';
-import { NoMapAvailable } from '../components/NoMapAvailable';
 import { askUserToTurnOnLocationPermissionSetting } from '../services/mapService';
 
 const KRAKOW_REGION = {
@@ -51,7 +50,7 @@ export default function MapScreen() {
           latitudeDelta: 0.04,
           longitudeDelta: 0.04,
         },
-        10000,
+        800,
       );
     }
   }, [location, mapReady, permission]);
@@ -80,7 +79,11 @@ export default function MapScreen() {
 
   const handleLocationButtonPress = async (): Promise<void> => {
     if (permission === Location.PermissionStatus.GRANTED) {
-      await refreshLocation();
+      try {
+        await refreshLocation();
+      } catch (error) {
+        console.error('Location error', error);
+      }
     } else if (canAskAgain) {
       await requestPermission();
     } else {
@@ -88,14 +91,11 @@ export default function MapScreen() {
     }
   };
 
-  if (Platform.OS === 'android') {
-    return <NoMapAvailable />;
-  }
-
   return (
     <View style={styles.map}>
       <MapView
         ref={mapRef}
+        provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
         style={[
           styles.map,
           {

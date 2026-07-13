@@ -41,6 +41,5 @@ export const mapPokeAPIDetailToPokemonDetailData = (
   },
   abilities: data.abilities.map(a => ({
     name: a.ability.name,
-    isHidden: a.is_hidden,
   })),
 });

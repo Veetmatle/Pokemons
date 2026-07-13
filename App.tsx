@@ -16,22 +16,17 @@ export default function App() {
   return (
     <>
       <StatusBar style="dark" />
-      {/* Android only (no-op on iOS/web): hide the system nav bar; a swipe
-          up from the bottom edge reveals it temporarily. */}
       <NavigationBar hidden />
       <SafeAreaProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <BottomSheetModalProvider>
-            <QueryClientProvider client={queryClient}>
-              <NavigationContainer>
+          <QueryClientProvider client={queryClient}>
+            <NavigationContainer>
+              <BottomSheetModalProvider>
                 <AppNavigator />
-              </NavigationContainer>
-            </QueryClientProvider>
-          </BottomSheetModalProvider>
+              </BottomSheetModalProvider>
+            </NavigationContainer>
+          </QueryClientProvider>
         </GestureHandlerRootView>
-        {/* Toast reads safe-area insets internally; keep it inside the
-            provider so showing/hiding it doesn't re-measure insets for the
-            whole tree (which made the tab bar labels flicker away). */}
         <Toast config={toastConfig} />
       </SafeAreaProvider>
     </>
