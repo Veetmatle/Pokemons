@@ -87,19 +87,18 @@ export default function MapScreen() {
   };
 
   const handleLocationButtonPress = async (): Promise<void> => {
-    if (permission === Location.PermissionStatus.GRANTED) {
-      try {
+    try {
+      if (permission === Location.PermissionStatus.GRANTED) {
         const current = await refreshLocation();
-        if (current) {
-          animateToLocation(current);
-        }
-      } catch (error) {
-        console.error('Location error', error);
+        if (current) animateToLocation(current);
+      } else if (canAskAgain) {
+        const granted = await requestPermission();
+        if (granted) animateToLocation(granted);
+      } else {
+        await askUserToTurnOnLocationPermissionSetting();
       }
-    } else if (canAskAgain) {
-      await requestPermission();
-    } else {
-      await askUserToTurnOnLocationPermissionSetting();
+    } catch (error) {
+      console.error('Location error', error);
     }
   };
 

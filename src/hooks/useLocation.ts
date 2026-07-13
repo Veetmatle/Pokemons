@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as Location from 'expo-location';
-import { AppState, AppStateStatus, Platform } from 'react-native';
+import { AppState, Platform } from 'react-native';
 
 type UserLocation = {
   latitude: number;
@@ -13,29 +13,10 @@ export function useUserLocation() {
     useState<Location.PermissionStatus | null>(null);
   const [canAskAgain, setCanAskAgain] = useState(true);
   const [isCheckingPermission, setIsCheckingPermission] = useState(false);
-  const appState = useRef<AppStateStatus>(AppState.currentState);
-  const isRequestingPermission = useRef(false);
-  const hasRequestedOnce = useRef(false);
+  const isBusy = useRef(false);
 
   const fetchCurrentPosition =
     useCallback(async (): Promise<UserLocation | null> => {
-      const publish = (coords: {
-        latitude: number;
-        longitude: number;
-      }): UserLocation => {
-        const next = {
-          latitude: coords.latitude,
-          longitude: coords.longitude,
-        };
-        setLocation(next);
-        return next;
-      };
-
-      const readPosition = () =>
-        Location.getCurrentPositionAsync({
-          accuracy: Location.LocationAccuracy.Balanced,
-        });
-
       if (Platform.OS === 'android') {
         const servicesOn = await Location.hasServicesEnabledAsync();
         if (!servicesOn) {
@@ -43,126 +24,104 @@ export function useUserLocation() {
             await Location.enableNetworkProviderAsync();
           } catch {
             const lastKnown = await Location.getLastKnownPositionAsync();
-            return lastKnown ? publish(lastKnown.coords) : null;
+            if (!lastKnown) return null;
+            const coords = lastKnown.coords;
+            setLocation(coords);
+            return coords;
           }
         }
       }
 
+      let coords;
       try {
-        const current = await readPosition();
-        return publish(current.coords);
+        coords = (
+          await Location.getCurrentPositionAsync({
+            accuracy: Location.LocationAccuracy.Balanced,
+          })
+        ).coords;
       } catch (error) {
-        if (Platform.OS !== 'android') {
-          throw error;
-        }
+        if (Platform.OS !== 'android') throw error;
         const lastKnown = await Location.getLastKnownPositionAsync();
-        return lastKnown ? publish(lastKnown.coords) : null;
+        if (!lastKnown) return null;
+        coords = lastKnown.coords;
       }
+      setLocation(coords);
+      return coords;
     }, []);
 
-  const withPermissionLock = useCallback(
-    async <T>(action: () => Promise<T>): Promise<T | null> => {
-      if (isRequestingPermission.current) return null;
-      setIsCheckingPermission(true);
-      isRequestingPermission.current = true;
-      try {
-        return await action();
-      } finally {
-        isRequestingPermission.current = false;
-        setIsCheckingPermission(false);
-      }
-    },
-    [],
-  );
-
-  const applyPermissionResult = useCallback(
+  const runLocationTask = useCallback(
     async (
-      status: Location.PermissionStatus,
-      askAgain: boolean,
-      { fetchPosition = true }: { fetchPosition?: boolean } = {},
-    ) => {
-      setPermission(status);
-      setCanAskAgain(askAgain);
-
-      if (fetchPosition && status === Location.PermissionStatus.GRANTED) {
-        await fetchCurrentPosition();
+      getResult: () => Promise<Location.LocationPermissionResponse>,
+      { fetchOnGranted = false }: { fetchOnGranted?: boolean } = {},
+    ): Promise<UserLocation | null> => {
+      if (isBusy.current) return null;
+      isBusy.current = true;
+      setIsCheckingPermission(true);
+      try {
+        const result = await getResult();
+        setPermission(result.status);
+        setCanAskAgain(result.canAskAgain);
+        if (
+          fetchOnGranted &&
+          result.status === Location.PermissionStatus.GRANTED
+        ) {
+          return await fetchCurrentPosition();
+        }
+        return null;
+      } catch (error) {
+        console.error('Location error', error);
+        setPermission(Location.PermissionStatus.DENIED);
+        return null;
+      } finally {
+        isBusy.current = false;
+        setIsCheckingPermission(false);
       }
     },
     [fetchCurrentPosition],
   );
 
-  const syncPermission = useCallback(async () => {
-    try {
-      await withPermissionLock(async () => {
-        const current = await Location.getForegroundPermissionsAsync();
-        await applyPermissionResult(current.status, current.canAskAgain, {
-          fetchPosition: false,
-        });
-      });
-    } catch (error) {
-      console.error('Location error', error);
-      setPermission(Location.PermissionStatus.DENIED);
-    }
-  }, [applyPermissionResult, withPermissionLock]);
+  const requestPermission = useCallback(
+    () =>
+      runLocationTask(Location.requestForegroundPermissionsAsync, {
+        fetchOnGranted: true,
+      }),
+    [runLocationTask],
+  );
 
-  // First-run: prompt once if undetermined, otherwise just read status.
-  const initLocation = useCallback(async () => {
-    if (hasRequestedOnce.current) {
-      await syncPermission();
-      return;
-    }
+  const refreshLocation = useCallback(
+    () =>
+      runLocationTask(Location.getForegroundPermissionsAsync, {
+        fetchOnGranted: true,
+      }),
+    [runLocationTask],
+  );
 
-    try {
-      await withPermissionLock(async () => {
+  const syncPermission = useCallback(
+    () => runLocationTask(Location.getForegroundPermissionsAsync),
+    [runLocationTask],
+  );
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    runLocationTask(
+      async () => {
         const current = await Location.getForegroundPermissionsAsync();
         if (
           current.status !== Location.PermissionStatus.GRANTED &&
           current.canAskAgain
         ) {
-          hasRequestedOnce.current = true;
-          const request = await Location.requestForegroundPermissionsAsync();
-          await applyPermissionResult(request.status, request.canAskAgain);
-          return;
+          return Location.requestForegroundPermissionsAsync();
         }
-
-        hasRequestedOnce.current = true;
-        await applyPermissionResult(current.status, current.canAskAgain);
-      });
-    } catch (error) {
-      console.error('Location error', error);
-      setPermission(Location.PermissionStatus.DENIED);
-    }
-  }, [applyPermissionResult, syncPermission, withPermissionLock]);
-
-  // Request permission func (on button in MapScreen)
-  const requestPermission = useCallback(async () => {
-    try {
-      await withPermissionLock(async () => {
-        const request = await Location.requestForegroundPermissionsAsync();
-        await applyPermissionResult(request.status, request.canAskAgain);
-      });
-    } catch (error) {
-      console.error('Location error', error);
-    }
-  }, [applyPermissionResult, withPermissionLock]);
-
-  useEffect(() => {
-    //eslint-disable-next-line react-hooks/set-state-in-effect
-    initLocation();
-  }, [initLocation]);
+        return current;
+      },
+      { fetchOnGranted: true },
+    );
+  }, [runLocationTask]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === 'active' &&
-        !isRequestingPermission.current
-      ) {
-        syncPermission();
-      }
-      appState.current = nextAppState;
+      if (nextAppState === 'active') syncPermission();
     });
-
     return () => subscription.remove();
   }, [syncPermission]);
 
@@ -171,7 +130,7 @@ export function useUserLocation() {
     permission,
     canAskAgain,
     requestPermission,
-    refreshLocation: fetchCurrentPosition,
+    refreshLocation,
     isCheckingPermission,
   };
 }
