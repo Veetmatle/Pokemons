@@ -1,3 +1,5 @@
+const faceDetectorEnabled = process.env.EXCLUDE_FACE_DETECTOR !== '1';
+
 module.exports = {
   expo: {
     name: 'pokemon-lask',
@@ -27,6 +29,9 @@ module.exports = {
     },
     web: {
       favicon: './assets/favicon.png',
+    },
+    extra: {
+      faceDetectorEnabled,
     },
     plugins: [
       'expo-image',

@@ -1,20 +1,9 @@
-## Used libs
+## Commands to run iOS: essential after lib patch fix to run simulator
 
-@tanstack/react-query - data cache from fetch, RAM GC, pagination handling;
-@legendapp/list - more optimal than standard list, provides component re-render
-@expo-image - more optimal than classic Image from RN
+- npm run ios:sim,
+- npm run ios:device,
+- npm start:sim
 
-## Code map
+## Commands to run Android stay the same
 
-`DTO mamping `- /mappers;
-
-`Main list management `-
-
-- {recycleItems={true}} - re-renders components without unmounting.
-- EstimatedItemSize for more effective layut handling.
-- OnEndReachedThreshold={0.5} as preftch for smoother UI;
-
-`PokemonListItemComponent` -
-
-- React.memo for re-render stop. CPU gets a break.
-- transition={300} for smoother experience.
+- npm run android/npx expo start -c for basic hot-reload work

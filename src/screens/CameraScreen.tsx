@@ -1,16 +1,37 @@
 import { useCallback, useEffect, useState } from 'react';
+import type { ComponentType } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
+import type { SharedValue } from 'react-native-reanimated';
+import type { CameraDevice } from 'react-native-vision-camera';
 import type { Bounds } from 'react-native-vision-camera-face-detector';
+import Constants from 'expo-constants';
 import { useIsFocused } from '@react-navigation/native';
 import { useCamera } from '../hooks/useCamera';
 import { useFavouritePokemonValue } from '../hooks/useFavouritePokemonValue';
 import { getPokemonOfficialArtworkUrlById } from '../services/pokemonService';
-import { FaceCameraView } from '../components/FaceCameraView';
+import { FaceCameraPreview } from '../components/FaceCameraPreview';
 import { NoCameraPermission } from '../components/NoCameraPermission';
 import { globalStyles } from '../styles/globalStyles';
 
 const FALLBACK_POKEMON_ID = 1;
+
+type CameraViewProps = {
+  device: CameraDevice;
+  isActive: boolean;
+  pokemonImageUrl: string;
+  faceBounds: SharedValue<Bounds | null>;
+  isPreviewReady: SharedValue<boolean>;
+  onPreviewReadyChange: (ready: boolean) => void;
+};
+
+const faceDetectorEnabled =
+  Constants.expoConfig?.extra?.faceDetectorEnabled ?? true;
+
+const CameraView: ComponentType<CameraViewProps> = faceDetectorEnabled
+  ? // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('../components/FaceCameraView').FaceCameraView
+  : FaceCameraPreview;
 
 export default function CameraScreen() {
   const { hasPermission, canRequestPermission, requestPermission, device } =
@@ -53,7 +74,7 @@ export default function CameraScreen() {
 
   return (
     <View style={styles.container}>
-      <FaceCameraView
+      <CameraView
         device={device}
         isActive={isFocused}
         pokemonImageUrl={pokemonImageUrl}
