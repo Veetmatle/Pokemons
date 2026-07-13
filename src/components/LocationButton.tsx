@@ -32,13 +32,12 @@ export const LocationButton = ({
       onPress={onPress}
       onPressIn={() => animateOpacity(0.9)}
       onPressOut={() => animateOpacity(0.4)}
-      disabled={disabled}>
-      <Animated.View
-        style={[
-          styles.recenterButton,
-          { bottom: insets.bottom + spacing.locationButton },
-          animatedStyle,
-        ]}>
+      disabled={disabled}
+      style={[
+        styles.recenterButton,
+        { bottom: insets.bottom + spacing.locationButton },
+      ]}>
+      <Animated.View style={[styles.recenterButtonInner, animatedStyle]}>
         <Text style={styles.recenterButtonText}>◎</Text>
       </Animated.View>
     </Pressable>
@@ -51,6 +50,9 @@ const styles = StyleSheet.create({
     right: spacing.xl + 10,
     width: 54,
     height: 54,
+  },
+  recenterButtonInner: {
+    flex: 1,
     borderRadius: radius.lg,
     borderColor: colors.accentMedium,
     borderWidth: 1,

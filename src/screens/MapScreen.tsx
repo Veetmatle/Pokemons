@@ -33,27 +33,36 @@ export default function MapScreen() {
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const [mapReady, setMapReady] = useState(false);
   const [selectedMarkerId, setSelectedMarkerId] = useState<string | null>(null);
+  const hasCenteredOnce = useRef(false);
   const selectedPokemonId =
     markers.find(marker => marker.id === selectedMarkerId)?.pokemonId ?? null;
 
-  useEffect(() => {
-    if (
-      location &&
-      mapReady &&
-      mapRef.current &&
-      permission === Location.PermissionStatus.GRANTED
-    ) {
-      mapRef.current.animateToRegion(
+  const animateToLocation = useCallback(
+    (target: { latitude: number; longitude: number }) => {
+      mapRef.current?.animateToRegion(
         {
-          latitude: location.latitude,
-          longitude: location.longitude,
+          latitude: target.latitude,
+          longitude: target.longitude,
           latitudeDelta: 0.04,
           longitudeDelta: 0.04,
         },
         800,
       );
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (
+      !hasCenteredOnce.current &&
+      location &&
+      mapReady &&
+      permission === Location.PermissionStatus.GRANTED
+    ) {
+      hasCenteredOnce.current = true;
+      animateToLocation(location);
     }
-  }, [location, mapReady, permission]);
+  }, [location, mapReady, permission, animateToLocation]);
 
   const handleMapLongPress = (event: LongPressEvent) => {
     const { latitude, longitude } = event.nativeEvent.coordinate;
@@ -80,7 +89,10 @@ export default function MapScreen() {
   const handleLocationButtonPress = async (): Promise<void> => {
     if (permission === Location.PermissionStatus.GRANTED) {
       try {
-        await refreshLocation();
+        const current = await refreshLocation();
+        if (current) {
+          animateToLocation(current);
+        }
       } catch (error) {
         console.error('Location error', error);
       }
